@@ -3,6 +3,7 @@ package net.thumbtack.school.figures.v1;
 import java.util.Objects;
 
 public class Rectangle {
+    //REVU: создайте лучше 2 точки leftTop и rightBottom вместо 4 переменных будет 2.
     private int xLeft;
     private int xRight;
     private int yBottom;
@@ -20,6 +21,7 @@ public class Rectangle {
     }
 
     public Rectangle(int xLeft, int yTop, int xRight, int yBottom) {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         this.xLeft = xLeft;
         this.yTop = yTop;
         this.xRight = xRight;
@@ -29,6 +31,7 @@ public class Rectangle {
     }
 
     public Rectangle(int length, int width) {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         this.length = length;
         this.width = width;
         xLeft = 0;
@@ -38,6 +41,7 @@ public class Rectangle {
     }
 
     public Rectangle() {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         xLeft = 0;
         yBottom = 0;
         xRight = 1;
@@ -73,6 +77,7 @@ public class Rectangle {
     }
 
     public void moveTo(int x, int y) {
+        //REVU: используйте метод moveTo из класса Point
         xRight = x + xRight - xLeft;
         yBottom = y + yBottom - yTop;
         xLeft = x;
@@ -80,6 +85,7 @@ public class Rectangle {
     }
 
     public void moveTo(Point point) {
+        //REVU: переиспользуйте метод выше
         xRight = point.getX() + xRight - xLeft;
         yBottom = point.getY() + yBottom - yTop;
         xLeft = point.getX();
@@ -87,6 +93,7 @@ public class Rectangle {
     }
 
     public void moveRel(int dx, int dy) {
+        //REVU: используйте метод moveRel из класса Point
         xLeft += dx;
         xRight += dx;
         yTop += dy;

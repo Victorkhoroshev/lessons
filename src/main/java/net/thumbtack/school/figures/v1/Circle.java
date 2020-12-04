@@ -3,6 +3,7 @@ package net.thumbtack.school.figures.v1;
 import java.util.Objects;
 
 public class Circle {
+    //REVU: инициализация полей происходит в конструкторе
     private Point center = new Point();
     private int radius;
 
@@ -12,18 +13,21 @@ public class Circle {
     }
 
     public Circle(int xCenter, int yCenter, int radius) {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         this.radius = radius;
         center.setX(xCenter);
         center.setY(yCenter);
     }
 
     public Circle(int radius) {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         this.radius = radius;
         center.setX(0);
         center.setY(0);
     }
 
     public Circle() {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         radius = 1;
         center.setX(0);
         center.setY(0);
@@ -46,16 +50,19 @@ public class Circle {
     }
 
     public void moveTo(int x, int y) {
+        //REVU: используйте метод moveTo из класса Point
         center.setX(x);
         center.setY(y);
     }
 
     public void moveTo(Point point) {
+        //REVU: вызовите метод выше. Не дублируйте код
         center.setX(point.getX());
         center.setY(point.getY());
     }
 
     public void moveRel(int dx, int dy) {
+        //REVU: используйте метод moveRel из класса Point
         center.setX(center.getX() + dx);
         center.setY(center.getY() + dy);
     }

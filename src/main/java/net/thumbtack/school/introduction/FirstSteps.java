@@ -1,4 +1,5 @@
 package net.thumbtack.school.introduction;
+//REVU: удаляйте неиспользуйте импорты
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -149,6 +150,7 @@ public class FirstSteps {
     public int max(int[][] matrix) {
         int max = Integer.MIN_VALUE;
 
+        //REVU: переиспользуйте метод max для линейного массива
         for(int[] ints : matrix) {
             for(int anInt : ints) {
                 if (anInt > max) {
@@ -162,6 +164,7 @@ public class FirstSteps {
     public int diagonalMax(int[][] matrix) {
         int max = Integer.MIN_VALUE;
         for (int i = 0; i < matrix.length; i++) {
+            //REVU: зачем нам 2ой цикл?
             for (int n : matrix[i]) {
                 if (matrix[i][i] > max) {
                     max = matrix[i][i];
@@ -172,6 +175,7 @@ public class FirstSteps {
     }
 
     public boolean isSortedDescendant(int[][] matrix) {
+        //REVU: методы классы доступны внутри и без создания объекта. Это лишнее
         FirstSteps firstSteps = new FirstSteps();
 
         for (int i = 0; i < matrix.length; i++) {

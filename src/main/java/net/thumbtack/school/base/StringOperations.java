@@ -11,32 +11,38 @@ public class StringOperations {
     }
 
     public static String getFirstAndLastLetterString(String string) {
+        //REVU: не нужно заводить переменные
         char first = string.charAt(0);
         char last = string.charAt(string.length() - 1);
         return String.valueOf(first) + last;
     }
 
     public static boolean isSameCharAtPosition(String string1, String string2, int index) {
+        //REVU: если строки кода короткие, то лучше делать решение в одну строку
         return string1.charAt(index)
                 == string2.charAt(index);
     }
 
     public static boolean isSameFirstCharPosition(String string1, String string2, char character) {
+        //REVU: если строки кода короткие, то лучше делать решение в одну строку
         return string1.indexOf(character)
                 == string2.indexOf(character);
     }
 
     public static boolean isSameLastCharPosition(String string1, String string2, char character) {
+        //REVU: если строки кода короткие, то лучше делать решение в одну строку
         return string1.lastIndexOf(character)
                 == string2.lastIndexOf(character);
     }
 
     public static boolean isSameFirstStringPosition(String string1, String string2, String str) {
+        //REVU: если строки кода короткие, то лучше делать решение в одну строку
         return string1.indexOf(str)
                 == string2.indexOf(str);
     }
 
     public static boolean isSameLastStringPosition(String string1, String string2, String str) {
+        //REVU: если строки кода короткие, то лучше делать решение в одну строку
         return string1.lastIndexOf(str)
                 == string2.lastIndexOf(str);
     }
@@ -54,6 +60,7 @@ public class StringOperations {
     }
 
     public static boolean isLessIgnoreCase(String string1, String string2) {
+        //REVU: переиспользуйте метод isLess
         return string1
                 .toLowerCase()
                 .compareTo(string2.toLowerCase()) < 0;
@@ -89,6 +96,7 @@ public class StringOperations {
     }
 
     public static String reverse(String string) {
+        //REVU: переменную можно не заводить
         StringBuilder stringBuilder = new StringBuilder(string);
         return stringBuilder
                 .reverse()
@@ -96,12 +104,14 @@ public class StringOperations {
     }
 
     public static boolean isPalindrome(String string) {
+        //REVU: так как метод reverse находится в этом же классе, то класс можно не указывать
         return StringOperations
                 .reverse(string)
                 .equals(string);
     }
 
     public static boolean isPalindromeIgnoreCase(String string) {
+        //REVU: так как метод reverse находится в этом же классе, то класс можно не указывать
         return StringOperations
                 .reverse(string)
                 .equalsIgnoreCase(string);
@@ -152,6 +162,7 @@ public class StringOperations {
     }
 
     public static String makeCsvStringFromInts(int[] array) {
+        //REVU: перенесите логику в makeCsvStringBuilderFromInts, а тут его переиспользуйте.Тогда не будет лишнего StringBuilder
         if (array.length == 0) {
             return "";
         }
@@ -167,6 +178,7 @@ public class StringOperations {
     }
 
     public static String makeCsvStringFromDoubles(double[] array) {
+        //REVU: перенесите логику в makeCsvStringBuilderFromDoubles, а тут его переиспользуйте. Тогда не будет лишнего StringBuilder
         if (array.length == 0) {
             return "";
         }

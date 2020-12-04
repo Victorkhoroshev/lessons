@@ -3,6 +3,7 @@ package net.thumbtack.school.figures.v1;
 import java.util.Objects;
 
 public class Square {
+    //REVU: создайте лучше 2 точки leftTop и rightBottom вместо 4 переменных будет 2.
     private int xLeft;
     private int xRight;
     private int yBottom;
@@ -18,6 +19,7 @@ public class Square {
     }
 
     public Square(int xLeft, int yTop, int size) {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         this.xLeft = xLeft;
         this.yTop = yTop;
         this.size = size;
@@ -26,6 +28,7 @@ public class Square {
     }
 
     public Square(int size) {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         this.size = size;
         xLeft = 0;
         xRight = size;
@@ -34,6 +37,7 @@ public class Square {
     }
 
     public Square() {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         xLeft = 0;
         xRight = 1;
         yTop = - 1;
@@ -61,6 +65,7 @@ public class Square {
     }
 
     public void moveTo(int x, int y) {
+        //REVU: используйте метод moveTo из класса Point
         xLeft = x;
         yTop = y;
         xRight = xLeft + size;
@@ -68,6 +73,7 @@ public class Square {
     }
 
     public void moveTo(Point point) {
+        //REVU: переиспользуйте метод выше
         xLeft = point.getX();
         yTop = point.getY();
         xRight = xLeft + size;
@@ -75,6 +81,7 @@ public class Square {
     }
 
     public void moveRel(int dx, int dy) {
+        //REVU: используйте метод moveRel из класса Point
         xLeft += dx;
         xRight += dx;
         yTop += dy;

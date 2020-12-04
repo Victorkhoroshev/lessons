@@ -3,6 +3,7 @@ package net.thumbtack.school.figures.v1;
 import java.util.Objects;
 
 public class Ellipse {
+    //REVU: инициализация полей происходит в конструкторе
     private Point center = new Point();
     private int xAxis;
     private int yAxis;
@@ -14,6 +15,7 @@ public class Ellipse {
     }
 
     public Ellipse(int xCenter, int yCenter, int xAxis, int yAxis) {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         center.setX(xCenter);
         center.setY(yCenter);
         this.xAxis = xAxis;
@@ -21,6 +23,7 @@ public class Ellipse {
     }
 
     public Ellipse(int xAxis,int yAxis) {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         this.xAxis = xAxis;
         this.yAxis = yAxis;
         center.setX(0);
@@ -28,6 +31,7 @@ public class Ellipse {
     }
 
     public Ellipse() {
+        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
         xAxis = 1;
         yAxis = 1;
         center.setX(0);
@@ -59,16 +63,19 @@ public class Ellipse {
     }
 
     public void moveTo(int x, int y) {
+        //REVU: используйте метод moveTo из класса Point
         center.setX(x);
         center.setY(y);
     }
 
     public void moveTo(Point point) {
+        //REVU: вызовите метод выше. Не дублируйте код
         center.setX(point.getX());
         center.setY(point.getY());
     }
 
     public void moveRel(int dx, int dy) {
+        //REVU: используйте метод moveRel из класса Point
         center.setX(center.getX() + dx);
         center.setY(center.getY() + dy);
     }
