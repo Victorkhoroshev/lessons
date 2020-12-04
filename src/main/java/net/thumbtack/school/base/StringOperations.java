@@ -51,6 +51,7 @@ public class StringOperations {
     }
 
     public static String concat(String string1, String string2) {
+        //REVU: используйте String.concat
         return string1 + string2;
     }
 
@@ -65,10 +66,13 @@ public class StringOperations {
     }
 
     public static String getCommonPrefix(String string1, String string2) {
+        //REVU: StringBuilder здесь не нужен
         StringBuilder stringBuilder = new StringBuilder();
+        //REVU: используйте Math.min, чтобы найти наименьшую длину среди строк и используйте это значение в условии цикла.
         char[] chars1 = string1.toCharArray();
         char[] chars2 = string2.toCharArray();
         for (int i = 0; i < chars1.length && i < chars2.length; i++) {
+            //REVU: сделайте условие, что если !=, то возвращаем substring
             if (chars1[i] == chars2[i]) {
                 stringBuilder.append(chars1[i]);
             }
@@ -76,6 +80,7 @@ public class StringOperations {
                 return stringBuilder.toString();
             }
         }
+        //REVU: а если вышли из цикла, то возвращаем substring(0, min)
         return stringBuilder.toString();
     }
 
@@ -178,6 +183,7 @@ public class StringOperations {
     }
 
     public static StringBuilder insertCharacters(String string, int[] positions, char[] characters) {
+        //REVU: можно упростить. В StringBuilder просто передайте строку. И условие в цикле тоже лишнее.
         StringBuilder stringBuilder = new StringBuilder(string.length() + positions.length)
                 .append(string);
         for (int i = positions.length - 1; i >= 0; i--) {
