@@ -3,39 +3,26 @@ package net.thumbtack.school.figures.v1;
 import java.util.Objects;
 
 public class Ellipse {
-    //REVU: инициализация полей происходит в конструкторе
-    private Point center = new Point();
+    private Point center;
     private int xAxis;
     private int yAxis;
 
     public Ellipse(Point point, int xAxis, int yAxis) {
-        center = point;
+        center = new Point(point.getX(), point.getY());
         this.xAxis = xAxis;
         this.yAxis = yAxis;
     }
 
     public Ellipse(int xCenter, int yCenter, int xAxis, int yAxis) {
-        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
-        center.setX(xCenter);
-        center.setY(yCenter);
-        this.xAxis = xAxis;
-        this.yAxis = yAxis;
+        this(new Point(xCenter, yCenter), xAxis, yAxis);
     }
 
     public Ellipse(int xAxis,int yAxis) {
-        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
-        this.xAxis = xAxis;
-        this.yAxis = yAxis;
-        center.setX(0);
-        center.setY(0);
+        this(0, 0, xAxis, yAxis);
     }
 
     public Ellipse() {
-        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
-        xAxis = 1;
-        yAxis = 1;
-        center.setX(0);
-        center.setY(0);
+        this(0, 0, 1, 1);
     }
 
     public Point getCenter() {
@@ -63,21 +50,15 @@ public class Ellipse {
     }
 
     public void moveTo(int x, int y) {
-        //REVU: используйте метод moveTo из класса Point
-        center.setX(x);
-        center.setY(y);
+        center.moveTo(x, y);
     }
 
     public void moveTo(Point point) {
-        //REVU: вызовите метод выше. Не дублируйте код
-        center.setX(point.getX());
-        center.setY(point.getY());
+        moveTo(point.getX(), point.getY());
     }
 
     public void moveRel(int dx, int dy) {
-        //REVU: используйте метод moveRel из класса Point
-        center.setX(center.getX() + dx);
-        center.setY(center.getY() + dy);
+        center.moveRel(dx, dy);
     }
 
     public void resize(double ratio) {

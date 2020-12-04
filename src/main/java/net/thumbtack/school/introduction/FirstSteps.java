@@ -1,11 +1,6 @@
 package net.thumbtack.school.introduction;
-//REVU: удаляйте неиспользуйте импорты
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
+import java.util.Arrays;
 
 public class FirstSteps {
 
@@ -79,6 +74,7 @@ public class FirstSteps {
         int count = 0;
         int summ = 0;
         double average = 0;
+
         if(array.length != 0) {
             for (int i : array) {
                 summ = summ + i;
@@ -149,13 +145,11 @@ public class FirstSteps {
 
     public int max(int[][] matrix) {
         int max = Integer.MIN_VALUE;
+        int interimMax;
 
-        //REVU: переиспользуйте метод max для линейного массива
-        for(int[] ints : matrix) {
-            for(int anInt : ints) {
-                if (anInt > max) {
-                    max = anInt;
-                }
+        for (int[] ints : matrix) {
+            if ((interimMax = max(ints)) > max) {
+                max = interimMax;
             }
         }
         return max;
@@ -163,27 +157,26 @@ public class FirstSteps {
 
     public int diagonalMax(int[][] matrix) {
         int max = Integer.MIN_VALUE;
-        for (int i = 0; i < matrix.length; i++) {
-            //REVU: зачем нам 2ой цикл?
-            for (int n : matrix[i]) {
+
+        try {
+            for (int i = 0; i < matrix.length; i++) {
                 if (matrix[i][i] > max) {
                     max = matrix[i][i];
                 }
             }
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            ex.getMessage();
         }
         return max;
     }
 
     public boolean isSortedDescendant(int[][] matrix) {
-        //REVU: методы классы доступны внутри и без создания объекта. Это лишнее
-        FirstSteps firstSteps = new FirstSteps();
-
         for (int i = 0; i < matrix.length; i++) {
             int[] array = new int[matrix[i].length];
             for (int b = 0; b < matrix[i].length; b++) {
                 array[b] = matrix[i][b];
             }
-            if (!firstSteps.isSortedDescendant(array)) {
+            if (!isSortedDescendant(array)) {
                 return false;
             }
         }

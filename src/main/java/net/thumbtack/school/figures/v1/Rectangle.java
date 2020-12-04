@@ -3,139 +3,99 @@ package net.thumbtack.school.figures.v1;
 import java.util.Objects;
 
 public class Rectangle {
-    //REVU: создайте лучше 2 точки leftTop и rightBottom вместо 4 переменных будет 2.
-    private int xLeft;
-    private int xRight;
-    private int yBottom;
-    private int yTop;
+    private Point leftTop;
+    private Point rightBottom;
     private int length;
     private int width;
 
     public Rectangle(Point leftTop, Point rightBottom) {
-        xLeft = leftTop.getX();
-        yTop = leftTop.getY();
-        xRight = rightBottom.getX();
-        yBottom = rightBottom.getY();
-        length = xRight - xLeft;
-        width = yBottom - yTop;
+        this.leftTop = leftTop;
+        this.rightBottom = rightBottom;
+        length = rightBottom.getX() - leftTop.getX();
+        width = rightBottom.getY() - leftTop.getY();
     }
 
     public Rectangle(int xLeft, int yTop, int xRight, int yBottom) {
-        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
-        this.xLeft = xLeft;
-        this.yTop = yTop;
-        this.xRight = xRight;
-        this.yBottom = yBottom;
-        length = xRight - xLeft;
-        width = yBottom - yTop;
+        this(new Point(xLeft, yTop), new Point(xRight, yBottom));
     }
 
     public Rectangle(int length, int width) {
-        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
-        this.length = length;
-        this.width = width;
-        xLeft = 0;
-        yBottom = 0;
-        xRight = length;
-        yTop = -width;
+        this(0, -width, length, 0);
     }
 
     public Rectangle() {
-        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
-        xLeft = 0;
-        yBottom = 0;
-        xRight = 1;
-        yTop = -1;
+        this(0, -1, 1, 0);
         length = 1;
         width = 1;
     }
 
     public Point getTopLeft() {
-        return new Point(xLeft, yTop);
+        return leftTop;
     }
 
     public Point getBottomRight() {
-        return new Point(xRight, yBottom);
+        return rightBottom;
     }
 
     public void setTopLeft(Point topLeft) {
-        xLeft = topLeft.getX();
-        yTop = topLeft.getY();
+        leftTop = new Point(topLeft.getX(), topLeft.getY());
     }
 
     public void setBottomRight(Point bottomRight) {
-        xRight = bottomRight.getX();
-        yBottom = bottomRight.getY();
+        rightBottom = new Point(bottomRight.getX(), bottomRight.getY());
     }
 
     public int getLength() {
-        return xRight - xLeft;
+        return rightBottom.getX() - leftTop.getX();
     }
 
     public int getWidth() {
-        return yBottom - yTop;
+        return rightBottom.getY() - leftTop.getY();
     }
 
     public void moveTo(int x, int y) {
-        //REVU: используйте метод moveTo из класса Point
-        xRight = x + xRight - xLeft;
-        yBottom = y + yBottom - yTop;
-        xLeft = x;
-        yTop = y;
+        rightBottom.moveTo(x + length, y + width);
+        leftTop.moveTo(x, y);
     }
 
     public void moveTo(Point point) {
-        //REVU: переиспользуйте метод выше
-        xRight = point.getX() + xRight - xLeft;
-        yBottom = point.getY() + yBottom - yTop;
-        xLeft = point.getX();
-        yTop = point.getY();
+        moveTo(point.getX(), point.getY());
     }
 
     public void moveRel(int dx, int dy) {
-        //REVU: используйте метод moveRel из класса Point
-        xLeft += dx;
-        xRight += dx;
-        yTop += dy;
-        yBottom += dy;
+        leftTop.moveRel(dx, dy);
+        rightBottom.moveRel(dx, dy);
     }
 
     public void resize(double ratio) {
         length = (int) (length * ratio);
         width = (int) (width * ratio);
-        xRight = xLeft + length;
-        yBottom = yTop + width;
+        setBottomRight(new Point(leftTop.getX() + length, leftTop.getY() + width));
     }
 
     public void stretch(double xRatio, double yRatio) {
         length = (int) (length * xRatio);
         width = (int) (width * yRatio);
-        xRight = xLeft + length;
-        yBottom = yTop + width;
+        setBottomRight(new Point(leftTop.getX() + length, leftTop.getY() + width));
     }
 
     public double getArea() {
-        return (double) (xRight - xLeft) * (yBottom - yTop);
+        return (double) (rightBottom.getX() - leftTop.getX()) * (rightBottom.getY() - leftTop.getY());
     }
 
     public double getPerimeter() {
-        return (xRight - xLeft + yBottom - yTop) * 2d;
+        return (rightBottom.getX() - leftTop.getX() + rightBottom.getY() - leftTop.getY()) *2d;
     }
 
     public boolean isInside(int x, int y) {
-        return x >= xLeft &&
-                x <= xRight &&
-                y >= yTop &&
-                y <= yBottom;
+        return x >= leftTop.getX() &&
+                x <= rightBottom.getX() &&
+                y >= leftTop.getY() &&
+                y <= rightBottom.getY();
     }
 
     public boolean isInside(Point point) {
-        int x = point.getX();
-        int y = point.getY();
-        return x >= xLeft &&
-                x <=xRight &&
-                y >= yTop &&
-                y <= yBottom;
+        return isInside(point.getX(), point.getY());
     }
 
     public boolean isIntersects(Rectangle rectangle) {
@@ -144,10 +104,10 @@ public class Rectangle {
         int yT = rectangle.getTopLeft().getY();
         int yB = rectangle.getBottomRight().getY();
 
-        return yT <= this.yBottom &&
-                yB >= this.yTop &&
-                xR >= this.xLeft &&
-                xL <= this.xRight;
+        return yT <= rightBottom.getY() &&
+                yB >= leftTop.getY() &&
+                xR >= leftTop.getX() &&
+                xL <= rightBottom.getX();
     }
 
     public boolean isInside(Rectangle rectangle) {
@@ -156,10 +116,10 @@ public class Rectangle {
         int yT = rectangle.getTopLeft().getY();
         int yB = rectangle.getBottomRight().getY();
 
-        return xL >= this.xLeft &&
-                xR <= this.xRight &&
-                yT >= this.yTop &&
-                yB <= this.yBottom;
+        return xL >= leftTop.getX() &&
+                xR <= rightBottom.getX() &&
+                yT >= leftTop.getY() &&
+                yB <= rightBottom.getY();
     }
 
     @Override
@@ -167,16 +127,14 @@ public class Rectangle {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Rectangle rectangle = (Rectangle) o;
-        return xLeft == rectangle.xLeft &&
-                xRight == rectangle.xRight &&
-                yBottom == rectangle.yBottom &&
-                yTop == rectangle.yTop &&
-                length == rectangle.length &&
-                width == rectangle.width;
+        return length == rectangle.length &&
+                width == rectangle.width &&
+                leftTop.equals(rectangle.leftTop) &&
+                rightBottom.equals(rectangle.rightBottom);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(xLeft, xRight, yBottom, yTop, length, width);
+        return Objects.hash(leftTop, rightBottom, length, width);
     }
 }

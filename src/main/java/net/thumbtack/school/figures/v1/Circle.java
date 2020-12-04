@@ -3,34 +3,25 @@ package net.thumbtack.school.figures.v1;
 import java.util.Objects;
 
 public class Circle {
-    //REVU: инициализация полей происходит в конструкторе
-    private Point center = new Point();
+    private Point center;
     private int radius;
 
     public Circle(Point center, int radius) {
-        this.center = center;
+        this.center = new Point(center.getX(), center.getY());
         this.radius = radius;
     }
 
     public Circle(int xCenter, int yCenter, int radius) {
-        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
-        this.radius = radius;
-        center.setX(xCenter);
-        center.setY(yCenter);
+        this(new Point(xCenter, yCenter), radius);
+
     }
 
     public Circle(int radius) {
-        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
-        this.radius = radius;
-        center.setX(0);
-        center.setY(0);
+        this(0, 0, radius);
     }
 
     public Circle() {
-        //REVU: не дублируйте код. Переиспользуйте конструкторы - this(...)
-        radius = 1;
-        center.setX(0);
-        center.setY(0);
+        this(0, 0, 1);
     }
 
     public Point getCenter() {
@@ -50,21 +41,15 @@ public class Circle {
     }
 
     public void moveTo(int x, int y) {
-        //REVU: используйте метод moveTo из класса Point
-        center.setX(x);
-        center.setY(y);
+        center.moveTo(x, y);
     }
 
     public void moveTo(Point point) {
-        //REVU: вызовите метод выше. Не дублируйте код
-        center.setX(point.getX());
-        center.setY(point.getY());
+        moveTo(point.getX(), point.getY());
     }
 
     public void moveRel(int dx, int dy) {
-        //REVU: используйте метод moveRel из класса Point
-        center.setX(center.getX() + dx);
-        center.setY(center.getY() + dy);
+        center.moveRel(dx, dy);
     }
 
     public void resize(double ratio) {

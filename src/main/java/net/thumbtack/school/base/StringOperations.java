@@ -11,40 +11,27 @@ public class StringOperations {
     }
 
     public static String getFirstAndLastLetterString(String string) {
-        //REVU: не нужно заводить переменные
-        char first = string.charAt(0);
-        char last = string.charAt(string.length() - 1);
-        return String.valueOf(first) + last;
+        return String.valueOf(string.charAt(0)) + string.charAt(string.length() - 1);
     }
 
     public static boolean isSameCharAtPosition(String string1, String string2, int index) {
-        //REVU: если строки кода короткие, то лучше делать решение в одну строку
-        return string1.charAt(index)
-                == string2.charAt(index);
+        return string1.charAt(index) == string2.charAt(index);
     }
 
     public static boolean isSameFirstCharPosition(String string1, String string2, char character) {
-        //REVU: если строки кода короткие, то лучше делать решение в одну строку
-        return string1.indexOf(character)
-                == string2.indexOf(character);
+        return string1.indexOf(character) == string2.indexOf(character);
     }
 
     public static boolean isSameLastCharPosition(String string1, String string2, char character) {
-        //REVU: если строки кода короткие, то лучше делать решение в одну строку
-        return string1.lastIndexOf(character)
-                == string2.lastIndexOf(character);
+        return string1.lastIndexOf(character) == string2.lastIndexOf(character);
     }
 
     public static boolean isSameFirstStringPosition(String string1, String string2, String str) {
-        //REVU: если строки кода короткие, то лучше делать решение в одну строку
-        return string1.indexOf(str)
-                == string2.indexOf(str);
+        return string1.indexOf(str) == string2.indexOf(str);
     }
 
     public static boolean isSameLastStringPosition(String string1, String string2, String str) {
-        //REVU: если строки кода короткие, то лучше делать решение в одну строку
-        return string1.lastIndexOf(str)
-                == string2.lastIndexOf(str);
+        return string1.lastIndexOf(str) == string2.lastIndexOf(str);
     }
 
     public static boolean isEqual(String string1, String string2) {
@@ -60,10 +47,7 @@ public class StringOperations {
     }
 
     public static boolean isLessIgnoreCase(String string1, String string2) {
-        //REVU: переиспользуйте метод isLess
-        return string1
-                .toLowerCase()
-                .compareTo(string2.toLowerCase()) < 0;
+        return isLess(string1.toLowerCase(), string2.toLowerCase());
     }
 
     public static String concat(String string1, String string2) {
@@ -96,25 +80,17 @@ public class StringOperations {
     }
 
     public static String reverse(String string) {
-        //REVU: переменную можно не заводить
-        StringBuilder stringBuilder = new StringBuilder(string);
-        return stringBuilder
+        return new StringBuilder(string)
                 .reverse()
                 .toString();
     }
 
     public static boolean isPalindrome(String string) {
-        //REVU: так как метод reverse находится в этом же классе, то класс можно не указывать
-        return StringOperations
-                .reverse(string)
-                .equals(string);
+        return reverse(string).equals(string);
     }
 
     public static boolean isPalindromeIgnoreCase(String string) {
-        //REVU: так как метод reverse находится в этом же классе, то класс можно не указывать
-        return StringOperations
-                .reverse(string)
-                .equalsIgnoreCase(string);
+        return reverse(string).equalsIgnoreCase(string);
     }
 
     public static String getLongestPalindromeIgnoreCase(String[] strings) {
@@ -162,41 +138,35 @@ public class StringOperations {
     }
 
     public static String makeCsvStringFromInts(int[] array) {
-        //REVU: перенесите логику в makeCsvStringBuilderFromInts, а тут его переиспользуйте.Тогда не будет лишнего StringBuilder
-        if (array.length == 0) {
-            return "";
-        }
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (int i : array) {
-            stringBuilder.append(i).append(',');
-        }
-        return stringBuilder
-                .deleteCharAt(stringBuilder.length() - 1)
-                .toString();
+        return makeCsvStringBuilderFromInts(array).toString();
     }
 
     public static String makeCsvStringFromDoubles(double[] array) {
-        //REVU: перенесите логику в makeCsvStringBuilderFromDoubles, а тут его переиспользуйте. Тогда не будет лишнего StringBuilder
-        if (array.length == 0) {
-            return "";
-        }
-        StringBuilder stringBuilder = new StringBuilder();
-        for (double d : array) {
-            stringBuilder.append(String.format("%.2f", d)).append(',');
-        }
-        return stringBuilder
-                .deleteCharAt(stringBuilder.length() - 1)
-                .toString();
+        return makeCsvStringBuilderFromDoubles(array).toString();
     }
 
     public static StringBuilder makeCsvStringBuilderFromInts(int[] array) {
-        return new StringBuilder(StringOperations.makeCsvStringFromInts(array));
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (array.length == 0) {
+            return stringBuilder;
+        }
+        for (int i : array) {
+            stringBuilder.append(i).append(',');
+        }
+        return stringBuilder.deleteCharAt(stringBuilder.length() - 1);
     }
 
     public static StringBuilder makeCsvStringBuilderFromDoubles(double[] array) {
-        return new StringBuilder(StringOperations.makeCsvStringFromDoubles(array));
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (array.length == 0) {
+            return stringBuilder;
+        }
+        for (double d : array) {
+            stringBuilder.append(String.format("%.2f", d)).append(',');
+        }
+        return stringBuilder.deleteCharAt(stringBuilder.length() - 1);
     }
 
     public static StringBuilder removeCharacters(String string, int[] positions) {
