@@ -77,6 +77,7 @@ public class Square {
     }
 
     public boolean isIntersects(Square square) {
+        //REVU: не нужно здесь заводить переменные.
         int xL = square.getTopLeft().getX();
         int xR = square.getBottomRight().getX();
         int yT = square.getTopLeft().getY();

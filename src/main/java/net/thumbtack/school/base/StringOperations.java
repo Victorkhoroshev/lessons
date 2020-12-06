@@ -65,6 +65,7 @@ public class StringOperations {
     }
 
     public static String getCommonPrefix(String string1, String string2) {
+        //REVU: эти переменные не нужны. Используйте String.charAt(i) у исходных строк
         char[] chars1 = string1.toCharArray();
         char[] chars2 = string2.toCharArray();
         int min = Math.min(string1.length(), string2.length());
