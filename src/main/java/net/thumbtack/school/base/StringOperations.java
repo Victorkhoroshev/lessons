@@ -55,22 +55,17 @@ public class StringOperations {
     }
 
     public static boolean isSamePrefix(String string1, String string2, String prefix) {
-        return string1.startsWith(prefix) &&
-                string2.startsWith(prefix);
+        return string1.startsWith(prefix) && string2.startsWith(prefix);
     }
 
     public static boolean isSameSuffix(String string1, String string2, String suffix) {
-        return string1.endsWith(suffix) &&
-                string2.endsWith(suffix);
+        return string1.endsWith(suffix) && string2.endsWith(suffix);
     }
 
     public static String getCommonPrefix(String string1, String string2) {
-        //REVU: эти переменные не нужны. Используйте String.charAt(i) у исходных строк
-        char[] chars1 = string1.toCharArray();
-        char[] chars2 = string2.toCharArray();
         int min = Math.min(string1.length(), string2.length());
         for (int i = 0; i < min; i++) {
-            if (chars1[i] != chars2[i]) {
+            if (string1.charAt(i) != string2.charAt(i)) {
                 return string1.substring(0, i);
             }
         }
@@ -78,9 +73,7 @@ public class StringOperations {
     }
 
     public static String reverse(String string) {
-        return new StringBuilder(string)
-                .reverse()
-                .toString();
+        return new StringBuilder(string).reverse().toString();
     }
 
     public static boolean isPalindrome(String string) {
@@ -94,8 +87,7 @@ public class StringOperations {
     public static String getLongestPalindromeIgnoreCase(String[] strings) {
         String str = "";
         for (String word : strings) {
-           if (StringOperations.reverse(word).equalsIgnoreCase(word) &&
-                   str.length() < word.length()) {
+           if (StringOperations.reverse(word).equalsIgnoreCase(word) && str.length() < word.length()) {
                str = word;
            }
        }
@@ -106,22 +98,17 @@ public class StringOperations {
         if (string1.length() < index + length || string2.length() < index + length) {
             return false;
         }
-        return string1
-                .substring(index, index + length)
-                .equals(string2.substring(index, index + length));
+        return string1.substring(index, index + length).equals(string2.substring(index, index + length));
     }
 
     public static boolean isEqualAfterReplaceCharacters(String string1, char replaceInStr1, char replaceByInStr1,
                                                         String string2, char replaceInStr2, char replaceByInStr2) {
-        return string1
-                .replace(replaceInStr1, replaceByInStr1)
-                .equals(string2.replace(replaceInStr2, replaceByInStr2));
+        return string1.replace(replaceInStr1, replaceByInStr1).equals(string2.replace(replaceInStr2, replaceByInStr2));
     }
 
     public static boolean isEqualAfterReplaceStrings(String string1, String replaceInStr1, String replaceByInStr1,
                                                      String string2, String replaceInStr2, String replaceByInStr2) {
-        return string1
-                .replaceAll(replaceInStr1, replaceByInStr1)
+        return string1.replaceAll(replaceInStr1, replaceByInStr1)
                 .equals(string2.replace(replaceInStr2, replaceByInStr2));
     }
 
@@ -130,9 +117,7 @@ public class StringOperations {
     }
 
     public static boolean isEqualAfterTrimming(String string1, String string2) {
-        return string1
-                .trim()
-                .equals(string2.trim());
+        return string1.trim().equals(string2.trim());
     }
 
     public static String makeCsvStringFromInts(int[] array) {
@@ -145,7 +130,6 @@ public class StringOperations {
 
     public static StringBuilder makeCsvStringBuilderFromInts(int[] array) {
         StringBuilder stringBuilder = new StringBuilder();
-
         if (array.length == 0) {
             return stringBuilder;
         }
@@ -157,7 +141,6 @@ public class StringOperations {
 
     public static StringBuilder makeCsvStringBuilderFromDoubles(double[] array) {
         StringBuilder stringBuilder = new StringBuilder();
-
         if (array.length == 0) {
             return stringBuilder;
         }

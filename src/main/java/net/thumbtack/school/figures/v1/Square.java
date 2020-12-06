@@ -66,10 +66,7 @@ public class Square {
     }
 
     public boolean isInside(int x, int y) {
-        return x >= leftTop.getX() &&
-                x <= rightBottom.getX() &&
-                y >= leftTop.getY() &&
-                y <= rightBottom.getY();
+        return x >= leftTop.getX() && x <= rightBottom.getX() && y >= leftTop.getY() && y <= rightBottom.getY();
     }
 
     public boolean isInside(Point point) {
@@ -77,16 +74,8 @@ public class Square {
     }
 
     public boolean isIntersects(Square square) {
-        //REVU: не нужно здесь заводить переменные.
-        int xL = square.getTopLeft().getX();
-        int xR = square.getBottomRight().getX();
-        int yT = square.getTopLeft().getY();
-        int yB = square.getBottomRight().getY();
-
-        return yB >= leftTop.getY() &&
-                yT <= rightBottom.getY() &&
-                xR >= leftTop.getX() &&
-                xL <= rightBottom.getX();
+        return square.getBottomRight().getY() >= leftTop.getY() && square.getTopLeft().getY() <= rightBottom.getY() &&
+                square.getBottomRight().getX() >= leftTop.getX() && square.getTopLeft().getX() <= rightBottom.getX();
     }
 
     public boolean isInside(Square square) {

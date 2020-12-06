@@ -88,10 +88,7 @@ public class Rectangle {
     }
 
     public boolean isInside(int x, int y) {
-        return x >= leftTop.getX() &&
-                x <= rightBottom.getX() &&
-                y >= leftTop.getY() &&
-                y <= rightBottom.getY();
+        return x >= leftTop.getX() && x <= rightBottom.getX() && y >= leftTop.getY() && y <= rightBottom.getY();
     }
 
     public boolean isInside(Point point) {
@@ -99,27 +96,17 @@ public class Rectangle {
     }
 
     public boolean isIntersects(Rectangle rectangle) {
-        int xL = rectangle.getTopLeft().getX();
-        int xR = rectangle.getBottomRight().getX();
-        int yT = rectangle.getTopLeft().getY();
-        int yB = rectangle.getBottomRight().getY();
-
-        return yT <= rightBottom.getY() &&
-                yB >= leftTop.getY() &&
-                xR >= leftTop.getX() &&
-                xL <= rightBottom.getX();
+        return rectangle.getTopLeft().getY() <= rightBottom.getY() &&
+                rectangle.getBottomRight().getY() >= leftTop.getY() &&
+                rectangle.getBottomRight().getX() >= leftTop.getX() &&
+                rectangle.getTopLeft().getX() <= rightBottom.getX();
     }
 
     public boolean isInside(Rectangle rectangle) {
-        int xL = rectangle.getTopLeft().getX();
-        int xR = rectangle.getBottomRight().getX();
-        int yT = rectangle.getTopLeft().getY();
-        int yB = rectangle.getBottomRight().getY();
-
-        return xL >= leftTop.getX() &&
-                xR <= rightBottom.getX() &&
-                yT >= leftTop.getY() &&
-                yB <= rightBottom.getY();
+        return rectangle.getTopLeft().getX() >= leftTop.getX() &&
+                rectangle.getBottomRight().getX() <= rightBottom.getX() &&
+                rectangle.getTopLeft().getY() >= leftTop.getY() &&
+                rectangle.getBottomRight().getY() <= rightBottom.getY();
     }
 
     @Override

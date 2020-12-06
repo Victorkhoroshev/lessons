@@ -16,8 +16,7 @@ public class NumberOperations {
 
     public static Integer find(double[] array, double value, double eps) {
         for (int i = 0; i < array.length; i++) {
-            if (Math.abs(array[i]) >= Math.abs(value) - eps &&
-                    Math.abs(array[i]) <= Math.abs(value) + eps) {
+            if (Math.abs(array[i]) >= Math.abs(value) - eps && Math.abs(array[i]) <= Math.abs(value) + eps) {
                 return i;
             }
         }

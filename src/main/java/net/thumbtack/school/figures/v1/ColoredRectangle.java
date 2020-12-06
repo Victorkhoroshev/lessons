@@ -11,22 +11,18 @@ public class ColoredRectangle extends Rectangle {
     }
 
     public ColoredRectangle(int xLeft, int yTop, int xRight, int yBottom, int color) {
-
         this(new Point(xLeft, yTop), new Point(xRight, yBottom), color);
     }
 
     public ColoredRectangle(int length, int width, int color) {
-
         this(0, -width, length, 0, color);
     }
 
     public ColoredRectangle(int color) {
-
         this(0, -1, 1, 0, color);
     }
 
     public ColoredRectangle() {
-
         this(0, -1, 1, 0, 1);
     }
 

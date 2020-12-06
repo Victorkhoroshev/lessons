@@ -13,7 +13,6 @@ public class Circle {
 
     public Circle(int xCenter, int yCenter, int radius) {
         this(new Point(xCenter, yCenter), radius);
-
     }
 
     public Circle(int radius) {
@@ -65,16 +64,14 @@ public class Circle {
     }
 
     public boolean isInside(int x, int y) {
-        double d = Math.sqrt(Math.pow((double) center.getX() - x, 2d) +
-                + Math.pow((double) center.getY() - y, 2d));
+        double d = Math.sqrt(Math.pow((double) center.getX() - x, 2d) + Math.pow((double) center.getY() - y, 2d));
         return d <= radius;
     }
 
     public boolean isInside(Point point) {
         int x = point.getX();
         int y = point.getY();
-        double d = Math.sqrt(Math.pow((double) center.getX() - x, 2d) +
-                + Math.pow((double) center.getY() - y, 2d));
+        double d = Math.sqrt(Math.pow((double) center.getX() - x, 2d) + Math.pow((double) center.getY() - y, 2d));
         return d <= radius;
     }
 

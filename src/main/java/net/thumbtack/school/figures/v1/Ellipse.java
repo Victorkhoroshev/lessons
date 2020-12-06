@@ -81,7 +81,7 @@ public class Ellipse {
 
     public boolean isInside(int x, int y) {
         double d = Math.pow((double) x - center.getX(), 2d) / Math.pow(xAxis / 2d, 2d) +
-                Math.pow((double) y - center.getY(), 2d) / Math.pow(yAxis / 2d, 2d);
+                + Math.pow((double) y - center.getY(), 2d) / Math.pow(yAxis / 2d, 2d);
         return d <= 1;
     }
 
@@ -89,7 +89,7 @@ public class Ellipse {
         int x = point.getX();
         int y = point.getY();
         double d = Math.pow((double) x - center.getX(), 2d) / Math.pow(xAxis / 2d, 2d) +
-                Math.pow((double) y - center.getY(), 2d) / Math.pow(yAxis / 2d, 2d);
+                + Math.pow((double) y - center.getY(), 2d) / Math.pow(yAxis / 2d, 2d);
         return d <= 1;
     }
 

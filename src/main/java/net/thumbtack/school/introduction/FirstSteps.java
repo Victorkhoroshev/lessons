@@ -29,10 +29,7 @@ public class FirstSteps {
     }
 
     public boolean isInsideRect(int xLeft, int yTop, int xRight, int yBottom, int x, int y) {
-        return x >= xLeft &&
-                x <= xRight &&
-                y >= yTop &&
-                y <= yBottom;
+        return x >= xLeft && x <= xRight && y >= yTop && y <= yBottom;
     }
 
     public int sum(int[] array) {
@@ -74,7 +71,6 @@ public class FirstSteps {
         int count = 0;
         int summ = 0;
         double average = 0;
-
         if(array.length != 0) {
             for (int i : array) {
                 summ = summ + i;
@@ -123,7 +119,6 @@ public class FirstSteps {
 
     public boolean isPalindrome(int[] array) {
         int b = array.length - 1;
-
         for (int i = 0; i < array.length; i++, b--) {
             if (array[i] != array[b]) {
                 return false;
@@ -134,7 +129,6 @@ public class FirstSteps {
 
     public int sum(int[][] matrix) {
         int sum = 0;
-
         for (int[] ints : matrix) {
             for (int anInt : ints) {
                 sum = sum + anInt;
@@ -146,7 +140,6 @@ public class FirstSteps {
     public int max(int[][] matrix) {
         int max = Integer.MIN_VALUE;
         int interimMax;
-
         for (int[] ints : matrix) {
             if ((interimMax = max(ints)) > max) {
                 max = interimMax;
@@ -157,7 +150,6 @@ public class FirstSteps {
 
     public int diagonalMax(int[][] matrix) {
         int max = Integer.MIN_VALUE;
-
         try {
             for (int i = 0; i < matrix.length; i++) {
                 if (matrix[i][i] > max) {
