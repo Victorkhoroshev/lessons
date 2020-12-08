@@ -1,8 +1,11 @@
-package net.thumbtack.school.figures.v1;
+package net.thumbtack.school.figures.v2;
 
+import net.thumbtack.school.iface.v2.Resizable;
+import net.thumbtack.school.iface.v2.Stretchable;
 import java.util.Objects;
 
-public class Ellipse {
+public class Ellipse extends Figure implements Resizable, Stretchable {
+
     private Point center;
     private int xAxis;
     private int yAxis;
@@ -49,18 +52,17 @@ public class Ellipse {
         this.center = center;
     }
 
+    @Override
     public void moveTo(int x, int y) {
         center.moveTo(x, y);
     }
 
-    public void moveTo(Point point) {
-        moveTo(point.getX(), point.getY());
-    }
-
+    @Override
     public void moveRel(int dx, int dy) {
         center.moveRel(dx, dy);
     }
 
+    @Override
     public void resize(double ratio) {
         xAxis *= ratio;
         yAxis *= ratio;
@@ -71,22 +73,21 @@ public class Ellipse {
         yAxis *= yRatio;
     }
 
+    @Override
     public double getArea() {
         return Math.PI * (xAxis * yAxis) / 4;
     }
 
+    @Override
     public double getPerimeter() {
         return 2 * Math.PI * Math.sqrt((Math.pow(xAxis, 2d) + Math.pow(yAxis, 2d)) / 8);
     }
 
+    @Override
     public boolean isInside(int x, int y) {
         double d = Math.pow((double) x - center.getX(), 2d) / Math.pow(xAxis / 2d, 2d) +
                 + Math.pow((double) y - center.getY(), 2d) / Math.pow(yAxis / 2d, 2d);
         return d <= 1;
-    }
-
-    public boolean isInside(Point point) {
-        return isInside(point.getX(), point.getY());
     }
 
     @Override

@@ -1,8 +1,9 @@
-package net.thumbtack.school.figures.v1;
+package net.thumbtack.school.figures.v2;
 
 import java.util.Objects;
 
-public class Circle {
+public class Circle extends Figure {
+
     private Point center;
     private int radius;
 
@@ -39,37 +40,35 @@ public class Circle {
         this.radius = radius;
     }
 
+    @Override
     public void moveTo(int x, int y) {
         center.moveTo(x, y);
     }
 
-    public void moveTo(Point point) {
-        moveTo(point.getX(), point.getY());
-    }
-
+    @Override
     public void moveRel(int dx, int dy) {
         center.moveRel(dx, dy);
     }
 
+    @Override
     public void resize(double ratio) {
         this.radius *= ratio;
     }
 
+    @Override
     public double getArea() {
         return Math.PI * Math.pow(radius, 2d);
     }
 
+    @Override
     public double getPerimeter() {
         return 2 * Math.PI * radius;
     }
 
+    @Override
     public boolean isInside(int x, int y) {
         double d = Math.sqrt(Math.pow((double) center.getX() - x, 2d) + Math.pow((double) center.getY() - y, 2d));
         return d <= radius;
-    }
-
-    public boolean isInside(Point point) {
-        return isInside(point.getX(), point.getY());
     }
 
     @Override
@@ -81,6 +80,7 @@ public class Circle {
                 center.equals(circle.center);
     }
 
+    @Override
     public int hashCode() {
         return Objects.hash(center, radius);
     }
