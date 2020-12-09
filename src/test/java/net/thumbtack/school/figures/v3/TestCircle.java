@@ -1,4 +1,4 @@
-package net.thumbtack.school.figures.v1;
+package net.thumbtack.school.figures.v3;
 
 import org.junit.jupiter.api.Test;
 
@@ -100,7 +100,7 @@ public class TestCircle {
         Circle circle = new Circle(10, 20, 10);
         circle.resize(0.3);
         assertAll(
-        () -> assertEquals(10, circle.getCenter().getX()),
+                () -> assertEquals(10, circle.getCenter().getX()),
                 () -> assertEquals(20, circle.getCenter().getY()),
                 () -> assertEquals(3, circle.getRadius())
         );
@@ -160,11 +160,10 @@ public class TestCircle {
         Circle circle2 = CircleFactory.createCircle(new Point(3, 4), 1);
         Circle circle3 = CircleFactory.createCircle(new Point(10, 20), 1);
         assertEquals(3, CircleFactory.getCircleCount());
-        CircleFactory.reset();
+       CircleFactory.reset();
         assertEquals(0, CircleFactory.getCircleCount());
         CircleFactory circleFactory = new CircleFactory();
         CircleFactory circleFactory1 = new CircleFactory();
         assertNotEquals(circleFactory.hashCode(), circleFactory1.hashCode());
     }
-
 }

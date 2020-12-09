@@ -1,10 +1,6 @@
-package net.thumbtack.school.figures.v2;
+package net.thumbtack.school.figures.v3;
 
-import net.thumbtack.school.iface.v2.Colored;
-import net.thumbtack.school.iface.v2.HasArea;
-import net.thumbtack.school.iface.v2.Movable;
-import net.thumbtack.school.iface.v2.Resizable;
-import net.thumbtack.school.iface.v2.*;
+import net.thumbtack.school.iface.v3.*;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Modifier;
 

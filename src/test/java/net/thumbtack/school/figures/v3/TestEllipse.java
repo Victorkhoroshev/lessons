@@ -1,4 +1,4 @@
-package net.thumbtack.school.figures.v1;
+package net.thumbtack.school.figures.v3;
 
 import org.junit.jupiter.api.Test;
 
@@ -74,13 +74,6 @@ public class TestEllipse {
         assertAll(
                 () -> assertEquals(1000, ellipse.getCenter().getX()),
                 () -> assertEquals(2000, ellipse.getCenter().getY()),
-                () -> assertEquals(10, ellipse.getXAxis()),
-                () -> assertEquals(20, ellipse.getYAxis())
-        );
-        ellipse.moveTo(new Point(1, 1));
-        assertAll(
-                () -> assertEquals(1, ellipse.getCenter().getX()),
-                () -> assertEquals(1, ellipse.getCenter().getY()),
                 () -> assertEquals(10, ellipse.getXAxis()),
                 () -> assertEquals(20, ellipse.getYAxis())
         );

@@ -160,5 +160,10 @@ public class TestCircle {
         Circle circle2 = CircleFactory.createCircle(new Point(3, 4), 1);
         Circle circle3 = CircleFactory.createCircle(new Point(10, 20), 1);
         assertEquals(3, CircleFactory.getCircleCount());
+        CircleFactory.reset();
+        assertEquals(0, CircleFactory.getCircleCount());
+        CircleFactory circleFactory = new CircleFactory();
+        CircleFactory circleFactory1 = new CircleFactory();
+        assertNotEquals(circleFactory.hashCode(), circleFactory1.hashCode());
     }
 }

@@ -1,6 +1,6 @@
-package net.thumbtack.school.misc.v2;
+package net.thumbtack.school.misc.v3;
 
-import net.thumbtack.school.figures.v2.Point;
+import net.thumbtack.school.figures.v3.Point;
 import java.util.Objects;
 
 public class Point3D extends Point {

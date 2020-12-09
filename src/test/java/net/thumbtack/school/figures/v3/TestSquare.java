@@ -1,4 +1,4 @@
-package net.thumbtack.school.figures.v1;
+package net.thumbtack.school.figures.v3;
 
 import org.junit.jupiter.api.Test;
 
@@ -95,14 +95,6 @@ public class TestSquare {
                 () -> assertEquals(2000, square.getTopLeft().getY()),
                 () -> assertEquals(1030, square.getBottomRight().getX()),
                 () -> assertEquals(2030, square.getBottomRight().getY()),
-                () -> assertEquals(30, square.getLength())
-        );
-        square.moveTo(new Point(1, 1));
-        assertAll(
-                () -> assertEquals(1, square.getTopLeft().getX()),
-                () -> assertEquals(1, square.getTopLeft().getY()),
-                () -> assertEquals(31, square.getBottomRight().getX()),
-                () -> assertEquals(31, square.getBottomRight().getY()),
                 () -> assertEquals(30, square.getLength())
         );
     }

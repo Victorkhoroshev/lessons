@@ -2,6 +2,7 @@ package net.thumbtack.school.misc.v2;
 
 import net.thumbtack.school.figures.v2.Point;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestColoredCube {
@@ -22,6 +23,8 @@ public class TestColoredCube {
                 () -> assertEquals(1, coloredCube.getColor()),
                 () -> assertEquals(coloredCube.getLength(), 10))
         ;
+        coloredCube.setColor(2);
+        assertEquals(2, coloredCube.getColor());
     }
 
     @Test
