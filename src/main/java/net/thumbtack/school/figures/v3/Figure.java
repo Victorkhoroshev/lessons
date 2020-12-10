@@ -4,7 +4,7 @@ import net.thumbtack.school.iface.v3.HasArea;
 import net.thumbtack.school.iface.v3.Movable;
 import net.thumbtack.school.iface.v3.Resizable;
 
-abstract class Figure implements Movable, HasArea, Resizable {
+public abstract class Figure implements Movable, HasArea, Resizable {
 
     public abstract double getPerimeter();
 
