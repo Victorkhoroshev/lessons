@@ -13,8 +13,8 @@ public abstract class Figure implements Movable, HasArea, Resizable {
     public boolean isInside(Point point) {
         return isInside(point.getX(), point.getY());
     }
-
+    //REVU: этот метод здесь лишний
     public abstract boolean equals(Object o);
-
+    //REVU: этот метод здесь лишний
     public abstract int hashCode();
 }

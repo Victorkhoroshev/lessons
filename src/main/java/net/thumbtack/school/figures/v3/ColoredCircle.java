@@ -12,6 +12,7 @@ public class ColoredCircle extends Circle implements Colored {
 
     public ColoredCircle(Point center, int radius, Color color) throws ColorException {
         super(center, radius);
+        //REVU: вызовите здесь сеттер
         try {
             this.color = Color.valueOf(color.toString());
         } catch (NullPointerException e) {
@@ -56,6 +57,7 @@ public class ColoredCircle extends Circle implements Colored {
     }
 
     public void setColor(Color color) throws ColorException {
+        //REVU: плохая практика ловить NullPointerException, лучше сделать проверку на нулл, чем ожидать NPE.
         try {
             this.color = Color.colorFromString(color.toString());
         } catch (NullPointerException e) {

@@ -1,7 +1,7 @@
 package net.thumbtack.school.boxes.v3;
 
 import net.thumbtack.school.iface.v3.HasArea;
-
+//REVU: наследование нужно сделать от класса, а не от интерфейса
 public class PairBox <T extends HasArea, V extends HasArea> implements HasArea {
 
     private T obj1;
@@ -12,18 +12,19 @@ public class PairBox <T extends HasArea, V extends HasArea> implements HasArea {
         this.obj2 = obj2;
     }
 
+    //REVU: геттер не соответствует имени объекта
     public T getContentFirst() {
         return obj1;
     }
-
+    //REVU: геттер не соответствует имени объекта
     public V getContentSecond () {
         return obj2;
     }
-
+    //REVU: сеттер не соответствует имени объекта
     public void setContentFirst(T obj) {
         obj1 = obj;
     }
-
+    //REVU: сеттер не соответствует имени объекта
     public void setContentSecond(V obj) {
         obj2 = obj;
     }

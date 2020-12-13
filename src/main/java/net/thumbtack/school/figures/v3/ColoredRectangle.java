@@ -12,6 +12,7 @@ public class ColoredRectangle extends Rectangle implements Colored {
 
     public ColoredRectangle(Point leftTop, Point rightBottom, Color color) throws ColorException {
         super(leftTop, rightBottom);
+        //REVU:вызовите сеттер
         try {
             this.color = Color.colorFromString(color.toString());
         } catch (NullPointerException | ColorException ex) {
@@ -56,6 +57,7 @@ public class ColoredRectangle extends Rectangle implements Colored {
     }
 
     public void setColor(Color color) throws ColorException {
+        //REVU: плохая практика ловить NullPointerException, лучше сделать проверку на нулл, чем ожидать NPE.
         try {
             this.color = Color.colorFromString(color.toString());
         } catch (NullPointerException ex) {

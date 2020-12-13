@@ -2,6 +2,7 @@ package net.thumbtack.school.boxes.v3;
 
 import net.thumbtack.school.iface.v3.HasArea;
 
+//REVU: наследование нужно сделать от класса, а не от интерфейса
 public class Box <T extends HasArea> implements HasArea {
 
     private T obj;

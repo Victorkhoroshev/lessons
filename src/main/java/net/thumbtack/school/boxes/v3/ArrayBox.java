@@ -1,5 +1,6 @@
 package net.thumbtack.school.boxes.v3;
 
+//REVU: не хватает наследования
 public class ArrayBox <T> {
 
     private T[] array;
