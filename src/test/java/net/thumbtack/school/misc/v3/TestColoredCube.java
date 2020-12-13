@@ -239,8 +239,5 @@ public class TestColoredCube {
     @Test
     public void testEnum2() throws ColorException {
         ColoredCube coloredCube = new ColoredCube(1, 1, 1, 1, "GREEN");
-
-        assertThrows(ColorException.class, () -> Color.GREEN.setColor(""));
-        assertThrows(ColorException.class, () -> Color.GREEN.setColor(null));
     }
 }

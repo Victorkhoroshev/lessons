@@ -1,45 +1,46 @@
 package net.thumbtack.school.boxes.v3;
 
+import net.thumbtack.school.figures.v3.Figure;
 import net.thumbtack.school.iface.v3.HasArea;
-//REVU: наследование нужно сделать от класса, а не от интерфейса
-public class PairBox <T extends HasArea, V extends HasArea> implements HasArea {
 
-    private T obj1;
-    private V obj2;
+public class PairBox <T extends Figure, V extends Figure> implements HasArea {
+
+    private T first;
+    private V second;
 
     public PairBox(T obj1, V obj2) {
-        this.obj1 = obj1;
-        this.obj2 = obj2;
+        this.first = obj1;
+        this.second = obj2;
     }
 
-    //REVU: геттер не соответствует имени объекта
+
     public T getContentFirst() {
-        return obj1;
+        return first;
     }
-    //REVU: геттер не соответствует имени объекта
+
     public V getContentSecond () {
-        return obj2;
+        return second;
     }
-    //REVU: сеттер не соответствует имени объекта
+
     public void setContentFirst(T obj) {
-        obj1 = obj;
+        first = obj;
     }
-    //REVU: сеттер не соответствует имени объекта
+
     public void setContentSecond(V obj) {
-        obj2 = obj;
+        second = obj;
     }
 
     @Override
     public double getArea() {
-        return obj1.getArea() + obj2.getArea();
+        return first.getArea() + second.getArea();
     }
 
-    public boolean isAreaEqual (PairBox<? extends HasArea, ? extends HasArea> pairBox) {
+    public boolean isAreaEqual (PairBox<? extends Figure, ? extends Figure> pairBox) {
         return this.getArea() == pairBox.getArea();
     }
 
-    public static boolean isAreaEqual(PairBox<? extends HasArea, ? extends HasArea> pairBox1,
-                                      PairBox<? extends HasArea, ? extends HasArea> pairBox2) {
+    public static boolean isAreaEqual(PairBox<? extends Figure, ? extends Figure> pairBox1,
+                                      PairBox<? extends Figure, ? extends Figure> pairBox2) {
         return pairBox1.getArea() == pairBox2.getArea();
     }
 }

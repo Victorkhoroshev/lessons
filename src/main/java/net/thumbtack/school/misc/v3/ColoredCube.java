@@ -18,11 +18,7 @@ public class ColoredCube extends Square implements Colored {
         super(leftTop, size);
         this.leftTopFrond = new Point3D(leftTop, z);
         this.rightBottomBehind = new Point3D(leftTop.getX() + size, leftTop.getY() + size, z - size);
-        try {
-            this.color = Color.colorFromString(color.toString());
-        } catch (NullPointerException ex) {
-            throw new ColorException(ColorErrorCode.NULL_COLOR);
-        }
+        this.setColor(color);
     }
 
     public ColoredCube(Point leftTop, int size, int z, String color) throws ColorException {
@@ -47,11 +43,10 @@ public class ColoredCube extends Square implements Colored {
 
     @Override
     public void setColor(Color color) throws ColorException {
-        try {
-            this.color = Color.colorFromString(color.toString());
-        } catch (NullPointerException ex) {
+        if (color == null) {
             throw new ColorException(ColorErrorCode.NULL_COLOR);
         }
+        this.color = Color.colorFromString(color.toString());
     }
 
     public void setColor(String color) throws ColorException {

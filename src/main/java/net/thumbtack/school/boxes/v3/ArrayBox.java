@@ -1,7 +1,8 @@
 package net.thumbtack.school.boxes.v3;
 
-//REVU: не хватает наследования
-public class ArrayBox <T> {
+import net.thumbtack.school.figures.v3.Figure;
+
+public class ArrayBox <T extends Figure> {
 
     private T[] array;
 
