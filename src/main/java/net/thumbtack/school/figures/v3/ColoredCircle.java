@@ -12,6 +12,7 @@ public class ColoredCircle extends Circle implements Colored {
 
     public ColoredCircle(Point center, int radius, Color color) throws ColorException {
         super(center, radius);
+        //REVU: this не нужен
         this.setColor(color);
     }
 
@@ -55,6 +56,7 @@ public class ColoredCircle extends Circle implements Colored {
         if (color == null) {
             throw new ColorException(ColorErrorCode.NULL_COLOR);
         }
+        //REVU: зачем получать enum из строки, когда у вас уже передается тип enum`а
         this.color = Color.colorFromString(color.toString());
     }
 

@@ -180,6 +180,8 @@ public class TestColoredCube {
         assertThrows(ColorException.class, () -> coloredCube.setColor((String) null));
     }
 
+    //REVU:обычно один тест проверяет один кейс.
+    //И вот пример, как можно проверять ошибки в Junit5 https://www.baeldung.com/junit-assert-exception
     @Test
     @SuppressWarnings("unused")
     public void testSetWrongColor() {
@@ -236,6 +238,7 @@ public class TestColoredCube {
         assertThrows(ColorException.class, () -> coloredCube.setColor(""));
     }
 
+    //REVU: что проверяет данный тест?
     @Test
     public void testEnum2() throws ColorException {
         ColoredCube coloredCube = new ColoredCube(1, 1, 1, 1, "GREEN");
