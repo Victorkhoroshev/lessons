@@ -180,67 +180,37 @@ public class TestColoredCube {
         assertThrows(ColorException.class, () -> coloredCube.setColor((String) null));
     }
 
-    //REVU:обычно один тест проверяет один кейс.
-    //И вот пример, как можно проверять ошибки в Junit5 https://www.baeldung.com/junit-assert-exception
     @Test
     @SuppressWarnings("unused")
-    public void testSetWrongColor() {
-        try {
-            ColoredCube coloredCube = new ColoredCube(0, 20, 10, 0, "YELLOW");
-            fail();
-        } catch (ColorException ex) {
-            assertEquals(ColorErrorCode.WRONG_COLOR_STRING, ex.getErrorCode());
-        }
-        try {
-            ColoredCube coloredCube = new ColoredCube(0, 20, 10, 0, (String) null);
-            fail();
-        } catch (ColorException ex) {
-            assertEquals(ColorErrorCode.NULL_COLOR, ex.getErrorCode());
-        }
-        try {
-            ColoredCube coloredCube = new ColoredCube(0, 20, 10, 0, (Color) null);
-            fail();
-        } catch (ColorException ex) {
-            assertEquals(ColorErrorCode.NULL_COLOR, ex.getErrorCode());
-        }
-        try {
-            ColoredCube coloredCube = new ColoredCube(1, 1, 1,1 , "GREEN");
-            coloredCube.setColor((Color) null);
-            fail();
-        } catch (ColorException ex) {
-            assertEquals(ColorErrorCode.NULL_COLOR, ex.getErrorCode());
-        }
-        try {
-            ColoredCube coloredCube = new ColoredCube(1, 1, 1,1 , "GREEN");
-            coloredCube.setColor((String) null);
-            fail();
-        } catch (ColorException ex) {
-            assertEquals(ColorErrorCode.NULL_COLOR, ex.getErrorCode());
-        }
-        try {
-            ColoredCube coloredCube = new ColoredCube(1, 1, 1,1 , "GREEN");
-            coloredCube.setColor((String) null);
-            fail();
-        } catch (ColorException ex) {
-            assertEquals(ColorErrorCode.NULL_COLOR.getErrorString(), ex.getErrorCode().getErrorString());
-        }
-        try {
-            ColoredCube coloredCube = new ColoredCube(1, 1, 1,1 , "GREEN");
-            coloredCube.setColor("YELLOW");
-            fail();
-        } catch (ColorException ex) {
-            assertEquals(ColorErrorCode.WRONG_COLOR_STRING.getErrorString(), ex.getErrorCode().getErrorString());
-        }
-    }
-    @Test
-    public void testEnum1() throws ColorException {
-        ColoredCube coloredCube = new ColoredCube(1, 1, 1, 1, "GREEN");
-        assertThrows(ColorException.class, () -> coloredCube.setColor(""));
+    public void testSetWrongConstructor() {
+        assertAll(
+                () -> assertThrows(ColorException.class, () -> {
+                    ColoredCube coloredCube = new ColoredCube(0, 20, 10, 0, "YELLOW");
+                }),
+                () -> assertThrows(ColorException.class, () -> {
+                    ColoredCube coloredCube1 = new ColoredCube(0, 20, 10, 0, (String) null);
+                }),
+                () -> assertThrows(ColorException.class, () -> {
+                    ColoredCube coloredCube2 = new ColoredCube(0, 20, 10, 0, (Color) null);
+                })
+        );
     }
 
-    //REVU: что проверяет данный тест?
     @Test
-    public void testEnum2() throws ColorException {
-        ColoredCube coloredCube = new ColoredCube(1, 1, 1, 1, "GREEN");
+    @SuppressWarnings("unused")
+    public void testErrorCode() throws ColorException {
+        ColoredCube coloredCube = new ColoredCube(1, 1, 1,1 , "GREEN");
+        ColorException colorException = assertThrows(ColorException.class, () -> {
+                coloredCube.setColor("YELLOW");
+        });
+        assertEquals(ColorErrorCode.WRONG_COLOR_STRING, colorException.getErrorCode());
+        colorException = assertThrows(ColorException.class, () -> {
+            coloredCube.setColor((String) null);
+        });
+        assertEquals(ColorErrorCode.NULL_COLOR, colorException.getErrorCode());
+        colorException = assertThrows(ColorException.class, () -> {
+            coloredCube.setColor((Color) null);
+        });
+        assertEquals(ColorErrorCode.NULL_COLOR, colorException.getErrorCode());
     }
 }
