@@ -3,8 +3,9 @@ package net.thumbtack.school.figures.v3;
 import net.thumbtack.school.iface.v3.HasArea;
 import net.thumbtack.school.iface.v3.Movable;
 import net.thumbtack.school.iface.v3.Resizable;
+import java.io.Serializable;
 
-public abstract class Figure implements Movable, HasArea, Resizable {
+public abstract class Figure implements Movable, HasArea, Resizable, Serializable {
 
     public abstract double getPerimeter();
 

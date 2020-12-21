@@ -2,8 +2,9 @@ package net.thumbtack.school.figures.v3;
 
 import net.thumbtack.school.iface.v3.Movable;
 
-public class Point implements Movable {
+import java.io.Serializable;
 
+public class Point implements Movable, Serializable {
     private int x, y;
 
     public Point(int x, int y) {
