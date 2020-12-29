@@ -18,6 +18,7 @@ public class Group {
     }
 
     public void setName(String name) throws TrainingException {
+        //REVU: лучше бросьте exception в if, тогда else не нужен будет.
         if (name != null && !name.equals("")) {
             this.name = name;
         } else {
@@ -30,6 +31,7 @@ public class Group {
     }
 
     public void setRoom(String room) throws TrainingException {
+        //REVU: лучше бросьте exception в if, тогда else не нужен будет.
         if (room != null && !room.equals("")) {
             this.room = room;
         } else {
@@ -46,6 +48,7 @@ public class Group {
     }
 
     public void removeTrainee(Trainee trainee) throws TrainingException {
+        //REVU: else можно убрать
         if (!trainees.contains(trainee)) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_NOT_FOUND);
         } else {
@@ -54,6 +57,7 @@ public class Group {
     }
 
     public void removeTrainee(int index) throws TrainingException {
+        //REVU: else можно убрать
         if (trainees.size() - 1 < index) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_NOT_FOUND);
         } else {
@@ -62,13 +66,16 @@ public class Group {
     }
 
     public Trainee getTraineeByFirstName(String firstName) throws TrainingException {
+        //REVU: переменную можно не заводить
         Trainee trainee = null;
         for (Trainee train : trainees) {
             if (train.getFirstName().equals(firstName)) {
+                //REVU: если нашли трейни, то верните его, вместо break
                 trainee = train;
                 break;
             }
         }
+        //REVU: и в конце концов этот if не нужен будет
         if (trainee == null) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_NOT_FOUND);
         }
@@ -76,13 +83,16 @@ public class Group {
     }
 
     public Trainee getTraineeByFullName(String fullName) throws TrainingException {
+        //REVU: переменную можно не заводить
         Trainee trainee = null;
         for (Trainee train : trainees) {
             if (train.getFullName().equals(fullName)) {
+                //REVU: если нашли трейни, то верните его, вместо break
                 trainee = train;
                 break;
             }
         }
+        //REVU: и в конце концов этот if не нужен будет
         if (trainee == null) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_NOT_FOUND);
         }
@@ -107,7 +117,11 @@ public class Group {
 
     public List<Trainee> getTraineesWithMaxRating() throws TrainingException {
         List<Trainee> list = new ArrayList<>();
+        //REVU: лишний цикл
         for (int i = 5; i > 0; i--) {
+            //REVU: заведите переменную maxRating и проверяйте, если текущий студент имеет рейтинг выше, чем maxRating
+            //то очищаем список, добавляем туда студента и присваем новое значение для maxRating, если рейтинги совпадают
+            // то просто добавляем в список
             for (Trainee trainee: trainees) {
                 if (trainee.getRating() == i) {
                     list.add(trainee);
@@ -124,6 +138,7 @@ public class Group {
     }
 
     public boolean hasDuplicates() {
+        //REVU: заведите локальную переменную с типом Set. Пытайтесь туда положить trainee, если не получился, то возвращайте true
         for (Trainee trainee : trainees) {
             for (int i = trainees.indexOf(trainee) + 1; i < trainees.size(); i++) {
                 if (trainee.equals(trainees.get(i))) {

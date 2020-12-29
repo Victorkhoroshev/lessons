@@ -20,6 +20,7 @@ public class School {
     }
 
     public void setName(String name) throws TrainingException {
+        //REVU: лучше бросьте exception в if, тогда else не нужен будет.
         if (name != null && !name.equals("")) {
             this.name = name;
         } else {
@@ -40,6 +41,7 @@ public class School {
     }
 
     public void addGroup(Group group) throws TrainingException {
+        //REVU: переиспользуйте containsGroup
         for (Group gr : groups) {
             if (gr.getName().equals(group.getName())) {
                 throw new TrainingException(TrainingErrorCode.DUPLICATE_GROUP_NAME);
@@ -49,7 +51,7 @@ public class School {
     }
 
     public void  removeGroup(Group group) throws TrainingException {
-
+        //REVU: else здесь не нужен
         if (!groups.contains(group)) {
             throw new TrainingException(TrainingErrorCode.GROUP_NOT_FOUND);
         } else {

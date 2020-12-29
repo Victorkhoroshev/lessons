@@ -19,6 +19,7 @@ public class Trainee implements Serializable {
     }
 
     public void setFirstName(String firstName) throws TrainingException {
+        //REVU: лучше бросьте exception в if, тогда else не нужен будет.
         if (firstName != null && !firstName.equals("")) {
             this.firstName = firstName;
         } else {
@@ -31,6 +32,7 @@ public class Trainee implements Serializable {
     }
 
     public void setLastName(String lastName) throws TrainingException {
+        //REVU: лучше бросьте exception в if, тогда else не нужен будет.
         if(lastName != null && !lastName.equals("")) {
             this.lastName = lastName;
         } else {
@@ -43,6 +45,7 @@ public class Trainee implements Serializable {
     }
 
     public void setRating(int rating) throws TrainingException {
+        //REVU: лучше бросьте exception в if, тогда else не нужен будет.
         if (rating >= 1 && rating <= 5) {
             this.rating = rating;
         } else {
