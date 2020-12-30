@@ -3,30 +3,22 @@ package net.thumbtack.school.matrix;
 import java.util.*;
 
 public class MatrixNonSimilarRows {
-    //REVU: private modifier?
-    int[][] matrix;
+    private final int[][] matrix;
 
     public MatrixNonSimilarRows(int[][] matrix) {
         this.matrix = matrix;
     }
 
     public Set<int[]> getNonSimilarRows() {
-        Set<int[]> result = new HashSet<>();
-        Set<Integer> valuesNext = new TreeSet<>();
-        //REVU: заведите Map<Set<Integer>, int[]> map
-        List<Set<Integer>> values = new ArrayList<>();
+        Set<Integer> values = new HashSet<>();
+        Map<Set<Integer>, int[]> map = new HashMap<>();
         for (int[] line : matrix) {
             for (int value : line) {
-                valuesNext.add(value);
+                values.add(value);
             }
-            //REVU: тут будете ложить данные в Map
-            if (values.stream().noneMatch(value -> value.equals(valuesNext)) || result.isEmpty()) {
-                result.add(line);
-            }
-            values.add(new TreeSet<>(valuesNext));
-            valuesNext.clear();
+            map.putIfAbsent(new HashSet<>(values), line);
+            values.clear();
         }
-        //REVU: а тут возвращать значения из Map
-        return result;
+        return new HashSet<>(map.values());
     }
 }

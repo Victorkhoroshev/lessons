@@ -20,12 +20,10 @@ public class School {
     }
 
     public void setName(String name) throws TrainingException {
-        //REVU: лучше бросьте exception в if, тогда else не нужен будет.
-        if (name != null && !name.equals("")) {
-            this.name = name;
-        } else {
+        if (name == null || name.equals("")) {
             throw new TrainingException(TrainingErrorCode.SCHOOL_WRONG_NAME);
         }
+        this.name = name;
     }
 
     public int getYear() {
@@ -41,22 +39,17 @@ public class School {
     }
 
     public void addGroup(Group group) throws TrainingException {
-        //REVU: переиспользуйте containsGroup
-        for (Group gr : groups) {
-            if (gr.getName().equals(group.getName())) {
-                throw new TrainingException(TrainingErrorCode.DUPLICATE_GROUP_NAME);
-            }
+        if (containsGroup(group)) {
+            throw new TrainingException(TrainingErrorCode.DUPLICATE_GROUP_NAME);
         }
         groups.add(group);
     }
 
     public void  removeGroup(Group group) throws TrainingException {
-        //REVU: else здесь не нужен
-        if (!groups.contains(group)) {
+        if (!containsGroup(group)) {
             throw new TrainingException(TrainingErrorCode.GROUP_NOT_FOUND);
-        } else {
-            groups.remove(group);
         }
+        groups.remove(group);
     }
 
     public void  removeGroup(String name) throws TrainingException {
@@ -65,8 +58,13 @@ public class School {
         }
     }
 
-    public boolean  containsGroup(Group group) {
-        return groups.contains(group);
+    public boolean containsGroup(Group group) {
+        for (Group gr : groups) {
+            if (gr.getName().equals(group.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

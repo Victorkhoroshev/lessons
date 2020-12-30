@@ -19,12 +19,10 @@ public class Trainee implements Serializable {
     }
 
     public void setFirstName(String firstName) throws TrainingException {
-        //REVU: лучше бросьте exception в if, тогда else не нужен будет.
-        if (firstName != null && !firstName.equals("")) {
-            this.firstName = firstName;
-        } else {
+        if (firstName == null || firstName.equals("")) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_WRONG_FIRSTNAME);
         }
+        this.firstName = firstName;
     }
 
     public String getLastName() {
@@ -32,12 +30,10 @@ public class Trainee implements Serializable {
     }
 
     public void setLastName(String lastName) throws TrainingException {
-        //REVU: лучше бросьте exception в if, тогда else не нужен будет.
-        if(lastName != null && !lastName.equals("")) {
-            this.lastName = lastName;
-        } else {
+        if(lastName == null || lastName.equals("")) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_WRONG_LASTNAME);
         }
+        this.lastName = lastName;
     }
 
     public int getRating() {
@@ -45,12 +41,10 @@ public class Trainee implements Serializable {
     }
 
     public void setRating(int rating) throws TrainingException {
-        //REVU: лучше бросьте exception в if, тогда else не нужен будет.
-        if (rating >= 1 && rating <= 5) {
-            this.rating = rating;
-        } else {
+        if (rating < 1 || rating > 5) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_WRONG_RATING);
         }
+        this.rating = rating;
     }
 
     public String getFullName() {

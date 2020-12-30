@@ -20,12 +20,10 @@ public class TraineeMap {
     }
 
     public void replaceTraineeInfo(Trainee trainee, String institute) throws TrainingException {
-        //REVU: лучше бросьте exception в if, тогда else не нужен будет.
-        if (mapTrainee.containsKey(trainee)) {
-            mapTrainee.replace(trainee, institute);
-        } else {
+        if (!mapTrainee.containsKey(trainee)) {
             throw new TrainingException(TrainingErrorCode.TRAINEE_NOT_FOUND);
         }
+        mapTrainee.replace(trainee, institute);
     }
 
     public void removeTraineeInfo(Trainee trainee) throws TrainingException{
