@@ -1,20 +1,24 @@
 package net.thumbtack.school.elections.server.dto.request;
 
 import net.thumbtack.school.elections.server.model.Voter;
-import java.util.UUID;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.regex.Pattern;
 
 public class RegisterVoterDtoRequest {
     private final String firstName;
     private final String lastName;
-    private final String patronymic;//может не быть
+    @Nullable
+    private final String patronymic;
     private final String street;
-    private final int house;
-    private final int apartment;//может не быть
+    private final Integer house;
+    @Nullable
+    private final Integer apartment;//может не быть
     private final String login;
     private final String password;
 
-    public RegisterVoterDtoRequest (String firstName, String lastName, String patronymic, String street, int house,
-                                    int apartment, String login, String password) {
+    public RegisterVoterDtoRequest (String firstName, String lastName, @Nullable String patronymic, String street, Integer house,
+                                    @Nullable Integer apartment, String login, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
@@ -25,32 +29,6 @@ public class RegisterVoterDtoRequest {
         this.password = password;
     }
 
-    public RegisterVoterDtoRequest (Voter voter) {
-        firstName = voter.getFirstName();
-        lastName = voter.getLastName();
-        patronymic = voter.getPatronymic();
-        street = voter.getStreet();
-        house = voter.getHouse();
-        apartment = voter.getApartment();
-        login = voter.getLogin();
-        password = voter.getPassword();
-    }
-
-    public RegisterVoterDtoRequest (String firstName, String lastName, String street,
-                                    int house, int apartment, String login, String password) {
-        this(firstName, lastName,"", street, house, apartment, login, password);
-    }
-
-    public RegisterVoterDtoRequest (String firstName, String lastName, String patronymic,
-                                    String street, int house, String login, String password) {
-        this(firstName, lastName, patronymic, street, house, 0,  login, password);
-    }
-
-    public RegisterVoterDtoRequest (String firstName, String lastName, String street,
-                                    int house, String login, String password) {
-        this(firstName, lastName, "", street, house, 0, login, password);
-    }
-
     public String getFirstName() {
         return firstName;
     }
@@ -59,6 +37,7 @@ public class RegisterVoterDtoRequest {
         return lastName;
     }
 
+    @Nullable
     public String getPatronymic() {
         return patronymic;
     }
@@ -71,7 +50,8 @@ public class RegisterVoterDtoRequest {
         return house;
     }
 
-    public int getApartment() {
+    @Nullable
+    public Integer getApartment() {
         return apartment;
     }
 
@@ -83,13 +63,57 @@ public class RegisterVoterDtoRequest {
         return password;
     }
 
-    public boolean isValid() {
+    public boolean isFirstNameValid() {
+        return isStringValid(firstName);
+    }
+
+    public boolean isLastNameValid() {
+        return isStringValid(lastName);
+    }
+
+    public boolean isPatronymicValid() {
+        return patronymic == null || isStringValid(patronymic);
+    }
+
+    public boolean isStreetValid() {
+        return isStringValid(street);
+    }
+
+    private boolean isStringValid(String s) {
+        return s.matches("[а-яА-Я]+");
+    }
+
+    public boolean isHouseValid() {
+        return house > 0;
+    }
+
+    public boolean isApartmentValid() {
+        return apartment== null || apartment >= 0;
+    }
+
+    public boolean isLoginValid() {
+        return login.length() > 8;
+    }
+
+    public boolean isPasswordValid() {
+        Pattern[] patterns = new Pattern[] {Pattern.compile("^(?=.*[a-zа-я]).+$"),
+                Pattern.compile("^(?=.*[A-ZА-Я]).+$"),
+                Pattern.compile(".*\\d.*"), Pattern.compile(".*\\W.*")};
+        for (Pattern pattern: patterns) {
+            if (!pattern.matcher(password).matches() || password.length() < 9 || password.matches(".*\\s.*")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean requiredFieldsIsNotNull() {
         return firstName != null && lastName != null && street != null &&
-                house != 0 && login != null && password != null;
-//        return
-//                && login.length() > 8 && password.length() > 8 && password.matches("A - Z") &&
-//                password.matches("a - z") && password.matches("/d") &&
+                house != null && login != null && password != null;
     }
 
 
+    public Voter newVoter() {
+        return new Voter(firstName, lastName, patronymic, street, house, apartment, login, password);
+    }
 }

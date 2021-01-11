@@ -1,11 +1,13 @@
 package net.thumbtack.school.elections.server.dto.request;
 
-public class LogoutDtoRequest {
+
+public class Session {
     private String token;
 
-    public LogoutDtoRequest(String token) {
+    public Session(String token) {
         setToken(token);
     }
+
 
     public String getToken() {
         return token;
@@ -13,9 +15,5 @@ public class LogoutDtoRequest {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public boolean requiredFieldsIsNotNull() {
-        return token != null;
     }
 }

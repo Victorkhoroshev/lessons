@@ -6,18 +6,19 @@ import net.thumbtack.school.elections.server.service.VoterException;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 //daoimpl - пакет с имплементациями dao-интерфейсов.
 public interface Dao<T> {
-
+//
     Voter get(String s) throws VoterException;
 
-    Map<T, UUID> getAll();
+    Set<T> getAll();
 
-    String save(T t) throws VoterException;
+    void save(T t) throws VoterException;
 
-    String update(T t, String s);
-
-    void delete(T t);
+//    String update(T t, String s);
+//
+//    void delete(T t);
 }

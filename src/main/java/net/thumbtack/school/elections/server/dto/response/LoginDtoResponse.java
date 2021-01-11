@@ -7,5 +7,17 @@ import java.util.UUID;
 // то необходимо создать класс LoginDtoRequest  с двумя полями -
 // “login и “password” для запроса и класс LoginDtoResponse с полем “token” для ответа.
 public class LoginDtoResponse {
-    private UUID token;
+    private String token;
+
+    public LoginDtoResponse(String token) {
+        setToken(token);
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

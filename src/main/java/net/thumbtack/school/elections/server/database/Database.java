@@ -10,7 +10,7 @@ import java.util.*;
 // Для реализации данного класса следует использовать паттерн Singleton
 // (https://refactoring.guru/ru/design-patterns/singleton/java/example)
 public final class Database {
-    private static final  Map<Voter, UUID> voterMap = new HashMap<>();
+    private static final  Set<Voter> voterSet = new HashSet<>();
     private static final List<String> logins = new ArrayList<>();
     private static volatile Database database;
 
@@ -27,8 +27,8 @@ public final class Database {
         }
     }
 
-    public static Map<Voter, UUID> getVoterMap() {
-        return voterMap;
+    public static Set<Voter> getVoterSet() {
+        return voterSet;
     }
 
     public static List<String> getLogins() {
