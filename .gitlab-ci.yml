@@ -7,7 +7,7 @@ variables:
 .compile_test: &compile_test
   stage: build
   script:
-    - 'mvn $MAVEN_CLI_OPTS clean compile test'
+    - 'mvn $MAVEN_CLI_OPTS clean compile saveDataFile'
 # Validate merge requests using JDK8
 compile_test:jdk11:
   <<: *compile_test

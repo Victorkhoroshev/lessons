@@ -1,11 +1,7 @@
 package net.thumbtack.school.elections.server.service;
 
-import net.thumbtack.school.elections.server.daoimpl.DaoImpl;
+import net.thumbtack.school.elections.server.dao.Dao;
 import net.thumbtack.school.elections.server.model.Voter;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
-import java.util.Objects;
 
 //service - пакет с классами, в которых производятся получение строки запроса от Server,
 // преобразование json в соответствующий класс dto-запрос, проверка этого dto (валидация),
@@ -17,9 +13,13 @@ import java.util.Objects;
 //.. создавая для этого экземпляр класса dto-ответ и преобразуя его в json
 // работает с бизнес-объектами
 public class VoterService {
-    private final DaoImpl dao = new DaoImpl();
-    private final SessionService session = SessionService.getInstance();
-//здесь генерируется токен????
+    private final Dao<Voter> dao;
+    private final SessionService sessionService;
+
+    public VoterService(Dao<Voter> dao, SessionService sessionService) {
+        this.dao = dao;
+        this.sessionService = sessionService;
+    }
 
     /**
      *
@@ -29,7 +29,7 @@ public class VoterService {
      */
     public String registerVoter(Voter voter) throws VoterException {
         dao.save(voter);
-        return session.login(voter);
+        return sessionService.loginVoter(voter);
     }
 
     public String loginVoter(String login, String password) throws VoterException {
@@ -37,11 +37,11 @@ public class VoterService {
         if (!voter.getPassword().equals(password)) {
             throw new VoterException(VoterExceptionErrorCode.VOTER_WRONG_PASSWORD);
         }
-        return session.login(voter);
+        return sessionService.loginVoter(voter);
     }
 
     public String logoutVoter(String token) throws VoterException {
-        session.logout(token);
+        sessionService.logoutVoter(token);
         return "Вы успешно разлогинились.";
     }
 

@@ -1,5 +1,6 @@
 package net.thumbtack.school.elections.server.dao;
 
+import com.google.gson.Gson;
 import net.thumbtack.school.elections.server.dto.response.RegisterVoterDtoResponse;
 import net.thumbtack.school.elections.server.model.Voter;
 import net.thumbtack.school.elections.server.service.VoterException;
@@ -17,6 +18,8 @@ public interface Dao<T> {
     Set<T> getAll();
 
     void save(T t) throws VoterException;
+
+    void stopServer(String saveDataFileName, Gson gson);
 
 //    String update(T t, String s);
 //

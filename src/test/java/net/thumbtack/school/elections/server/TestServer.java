@@ -1,28 +1,30 @@
 package net.thumbtack.school.elections.server;
 
 import com.google.gson.Gson;
+import net.thumbtack.school.elections.server.dao.Dao;
+import net.thumbtack.school.elections.server.daoimpl.DaoImpl;
 import net.thumbtack.school.elections.server.database.Database;
 import net.thumbtack.school.elections.server.dto.request.LoginDtoRequest;
 import net.thumbtack.school.elections.server.dto.request.LogoutDtoRequest;
 import net.thumbtack.school.elections.server.dto.request.RegisterVoterDtoRequest;
+import net.thumbtack.school.elections.server.dto.response.ErrorDtoResponse;
 import net.thumbtack.school.elections.server.dto.response.LoginDtoResponse;
-import net.thumbtack.school.elections.server.dto.response.LogoutDtoResponse;
 import net.thumbtack.school.elections.server.dto.response.RegisterVoterDtoResponse;
+import net.thumbtack.school.elections.server.model.Voter;
 import net.thumbtack.school.elections.server.service.SessionService;
 import net.thumbtack.school.elections.server.service.VoterException;
 import net.thumbtack.school.elections.server.service.VoterExceptionErrorCode;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
+import java.io.*;
 import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestServer {
     private final Gson gson = new Gson();
     private final Server server = new Server();
-    private final Database database = Database.getInstance();
-    private final SessionService session = SessionService.getInstance();
     private static final String NULL_REGISTERVOTERDTOREQUEST = "Пожалуйста, заполните все данные.";
     private static final String NULL_LOGINDTOREQUEST = "Пожалуйста, введите логин и пароль.";
     private static final String WRONG_FIRSTNAME = "Имя должно быть на кириллице, без пробелов, спец. символов и цифр.\n";
@@ -35,8 +37,41 @@ public class TestServer {
     private static final String WRONG_PASSWORD = "Пароль должен содержать хотя бы одну заглавную букву, одну строчную букву," +
             " цифру и один спец. символ, а его длинна не менее 9 символов, без пробелов.\n";
     @Test
-    public void testRegisterVoter()
-    {
+    public void testStartStopServer() {
+        server.startServer(null);
+        RegisterVoterDtoRequest registerVoterDto1 = new RegisterVoterDtoRequest("йцу", "йцу",
+                null,"йцу", 1, 188, randomString(), "111%111Aa");
+        assertAll(
+                () -> assertEquals(server.registerVoter(gson.toJson(registerVoterDto1)),gson.toJson(new RegisterVoterDtoResponse(server.sessionService.getSession(registerVoterDto1.newVoter()).getToken()))),
+                () -> assertEquals(gson.toJson(new LoginDtoResponse("Вы успешно разлогинились.")), server.logoutVoter(gson.toJson(new LogoutDtoRequest(server.sessionService.getSession(registerVoterDto1.newVoter()).getToken())))),
+                () -> assertEquals(1, server.dao.getAll().size())
+        );
+        server.stopServer("C:\\Thumbtack\\thumbtack_online_school_2020_2__viktor_khoroshev\\saveDataFile");
+        assertAll(
+                () -> assertNull(server.gson),
+                () -> assertNull(server.voterService),
+                () -> assertNull(server.dao),
+                () -> assertNull(server.sessionService)
+        );
+        assertAll(
+                () -> assertThrows(NullPointerException.class, () -> {
+                    server.registerVoter(gson.toJson(registerVoterDto1));
+                }),
+                () -> assertThrows(NullPointerException.class, () -> {
+                    server.loginVoter(gson.toJson(new LogoutDtoRequest(server.sessionService.getSession(registerVoterDto1.newVoter()).getToken())));
+                })
+        );
+        server.startServer("C:\\Thumbtack\\thumbtack_online_school_2020_2__viktor_khoroshev\\saveDataFile");
+        assertAll(
+                () -> assertEquals(gson.toJson(new ErrorDtoResponse("Вы уже зарегестрированны.")), server.registerVoter(gson.toJson(registerVoterDto1))),
+                () -> assertEquals(1,Database.getVoterSet().size())
+        );
+    }
+
+    @Test
+    public void testRegisterVoter(){
+        server.startServer(null);
+        SessionService session = server.sessionService;
         //firstName
         RegisterVoterDtoRequest voter1 = new RegisterVoterDtoRequest("Виктор", "Хорошев",
                 null,"Пригородная", 1, 188, randomString(), "111%111Aa");
@@ -155,72 +190,84 @@ public class TestServer {
                 "-ап", -1, -234, "null", "1");
 
         assertAll(
-                () -> assertEquals(server.registerVoter(requestToJson(voter1)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter1.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter2)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter2.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter3)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter3.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter4)), responseToJson(new RegisterVoterDtoResponse(WRONG_FIRSTNAME))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter5)), responseToJson(new RegisterVoterDtoResponse(WRONG_FIRSTNAME))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter6)), responseToJson(new RegisterVoterDtoResponse(WRONG_FIRSTNAME))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter66)), responseToJson(new RegisterVoterDtoResponse(WRONG_FIRSTNAME))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter7)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter7.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter8)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter8.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter9)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter9.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter10)), responseToJson(new RegisterVoterDtoResponse(WRONG_LASTNAME))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter11)), responseToJson(new RegisterVoterDtoResponse(WRONG_LASTNAME))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter12)), responseToJson(new RegisterVoterDtoResponse(WRONG_LASTNAME))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter122)), responseToJson(new RegisterVoterDtoResponse(WRONG_LASTNAME))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter13)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter13.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter14)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter14.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter15)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter15.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter16)), responseToJson(new RegisterVoterDtoResponse(WRONG_PATRONYMIC))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter17)), responseToJson(new RegisterVoterDtoResponse(WRONG_PATRONYMIC))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter18)), responseToJson(new RegisterVoterDtoResponse(WRONG_PATRONYMIC))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter188)), responseToJson(new RegisterVoterDtoResponse(WRONG_PATRONYMIC))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter19)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter19.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter20)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter20.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter21)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter21.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter22)), responseToJson(new RegisterVoterDtoResponse(WRONG_STREET))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter23)), responseToJson(new RegisterVoterDtoResponse(WRONG_STREET))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter24)), responseToJson(new RegisterVoterDtoResponse(WRONG_STREET))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter25)), responseToJson(new RegisterVoterDtoResponse(WRONG_STREET))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter26)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter26.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter27)), responseToJson(new RegisterVoterDtoResponse(WRONG_HOUSE))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter28)), responseToJson(new RegisterVoterDtoResponse(WRONG_HOUSE))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter29)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter29.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter30)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter30.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter31)), responseToJson(new RegisterVoterDtoResponse(WRONG_APARTMENT))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter33)), responseToJson(new RegisterVoterDtoResponse(WRONG_LOGIN))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter35)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter35.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter36)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter36.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter37)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter37.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter38)), responseToJson(new RegisterVoterDtoResponse(session.getSession(voter38.newVoter()).getToken()))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter39)), responseToJson(new RegisterVoterDtoResponse(WRONG_PASSWORD))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter40)), responseToJson(new RegisterVoterDtoResponse(WRONG_PASSWORD))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter41)), responseToJson(new RegisterVoterDtoResponse(WRONG_PASSWORD))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter42)), responseToJson(new RegisterVoterDtoResponse(WRONG_PASSWORD))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter43)), responseToJson(new RegisterVoterDtoResponse(WRONG_PASSWORD))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter44)), responseToJson(new RegisterVoterDtoResponse(WRONG_PASSWORD))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter45)), responseToJson(new RegisterVoterDtoResponse(WRONG_PASSWORD))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter46)), responseToJson(new RegisterVoterDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter47)), responseToJson(new RegisterVoterDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter48)), responseToJson(new RegisterVoterDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter50)), responseToJson(new RegisterVoterDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter51)), responseToJson(new RegisterVoterDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter52)), responseToJson(new RegisterVoterDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
-                () -> assertEquals(server.registerVoter(requestToJson(voter53)), responseToJson(new RegisterVoterDtoResponse(WRONG_FIRSTNAME + WRONG_LASTNAME + WRONG_PATRONYMIC + WRONG_STREET + WRONG_HOUSE + WRONG_APARTMENT + WRONG_LOGIN + WRONG_PASSWORD)))
+                () -> assertEquals(server.registerVoter(gson.toJson(voter1)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter1.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter2)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter2.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter3)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter3.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter( gson.toJson(voter4)), gson.toJson(new ErrorDtoResponse(WRONG_FIRSTNAME))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter5)), gson.toJson(new ErrorDtoResponse(WRONG_FIRSTNAME))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter6)), gson.toJson(new ErrorDtoResponse(WRONG_FIRSTNAME))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter66)), gson.toJson(new ErrorDtoResponse(WRONG_FIRSTNAME))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter7)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter7.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter8)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter8.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter9)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter9.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter10)), gson.toJson(new ErrorDtoResponse(WRONG_LASTNAME))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter11)), gson.toJson(new ErrorDtoResponse(WRONG_LASTNAME))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter12)), gson.toJson(new ErrorDtoResponse(WRONG_LASTNAME))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter122)), gson.toJson(new ErrorDtoResponse(WRONG_LASTNAME))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter13)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter13.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter14)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter14.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter15)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter15.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter16)), gson.toJson(new ErrorDtoResponse(WRONG_PATRONYMIC))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter17)), gson.toJson(new ErrorDtoResponse(WRONG_PATRONYMIC))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter18)), gson.toJson(new ErrorDtoResponse(WRONG_PATRONYMIC))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter188)), gson.toJson(new ErrorDtoResponse(WRONG_PATRONYMIC))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter19)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter19.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter20)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter20.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter21)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter21.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter22)), gson.toJson(new ErrorDtoResponse(WRONG_STREET))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter23)), gson.toJson(new ErrorDtoResponse(WRONG_STREET))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter24)), gson.toJson(new ErrorDtoResponse(WRONG_STREET))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter25)), gson.toJson(new ErrorDtoResponse(WRONG_STREET))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter26)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter26.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter27)), gson.toJson(new ErrorDtoResponse(WRONG_HOUSE))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter28)), gson.toJson(new ErrorDtoResponse(WRONG_HOUSE))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter29)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter29.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter30)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter30.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter31)), gson.toJson(new ErrorDtoResponse(WRONG_APARTMENT))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter33)), gson.toJson(new ErrorDtoResponse(WRONG_LOGIN))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter35)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter35.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter36)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter36.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter37)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter37.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter38)), gson.toJson(new RegisterVoterDtoResponse(session.getSession(voter38.newVoter()).getToken()))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter39)), gson.toJson(new ErrorDtoResponse(WRONG_PASSWORD))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter40)), gson.toJson(new ErrorDtoResponse(WRONG_PASSWORD))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter41)), gson.toJson(new ErrorDtoResponse(WRONG_PASSWORD))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter42)), gson.toJson(new ErrorDtoResponse(WRONG_PASSWORD))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter43)), gson.toJson(new ErrorDtoResponse(WRONG_PASSWORD))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter44)), gson.toJson(new ErrorDtoResponse(WRONG_PASSWORD))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter45)), gson.toJson(new ErrorDtoResponse(WRONG_PASSWORD))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter46)), gson.toJson(new ErrorDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter47)), gson.toJson(new ErrorDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter48)), gson.toJson(new ErrorDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter50)), gson.toJson(new ErrorDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter51)), gson.toJson(new ErrorDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter52)), gson.toJson(new ErrorDtoResponse(NULL_REGISTERVOTERDTOREQUEST))),
+                () -> assertEquals(server.registerVoter(gson.toJson(voter53)), gson.toJson(new ErrorDtoResponse(WRONG_FIRSTNAME + WRONG_LASTNAME + WRONG_PATRONYMIC + WRONG_STREET + WRONG_HOUSE + WRONG_APARTMENT + WRONG_LOGIN + WRONG_PASSWORD)))
         );
+        server.startServer(null);
     }
 
     @Test
     public void testLogoutVoter() throws VoterException {
+        server.startServer(null);
+        SessionService session = server.sessionService;
         RegisterVoterDtoRequest voter1 = new RegisterVoterDtoRequest(randomString(), randomString(),
                 null,randomString(), 1, 188, randomString(), "111%111Aa");
         server.registerVoter(gson.toJson(voter1));
         LogoutDtoRequest request = new LogoutDtoRequest(session.getSession(voter1.newVoter()).getToken());
-        LogoutDtoResponse response = new LogoutDtoResponse(server.logoutVoter(gson.toJson(request)));
+        LogoutDtoRequest request1 = null;
+        LogoutDtoRequest request2 = new LogoutDtoRequest(null);
+        LogoutDtoRequest request3 = new LogoutDtoRequest(randomString());
+        assertEquals(gson.toJson(new LoginDtoResponse("Вы успешно разлогинились.")),server.logoutVoter(gson.toJson(request)));
+        assertEquals(gson.toJson(new ErrorDtoResponse("Что-то пошло не так.")),server.logoutVoter(gson.toJson(request1)));
+        assertEquals(gson.toJson(new ErrorDtoResponse("Что-то пошло не так.")),server.logoutVoter(gson.toJson(request2)));
+        assertEquals(gson.toJson(new ErrorDtoResponse("Сессия пользователя не найдена.")), server.logoutVoter(gson.toJson(request3)));
+        server.stopServer(null);
     }
     @Test
     public void testLoginVoter() {
+        server.startServer(null);
+        SessionService session = server.sessionService;
         RegisterVoterDtoRequest voter1 = new RegisterVoterDtoRequest(randomString(), randomString(),
                 null,randomString(), 1, 188, "login1111111", "111%111Aa");
         RegisterVoterDtoRequest voter2 = new RegisterVoterDtoRequest(randomString(), randomString(),
@@ -249,13 +296,14 @@ public class TestServer {
                 () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest1)), gson.toJson(new LoginDtoResponse(session.getSession(voter1.newVoter()).getToken()))),
                 () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest2)), gson.toJson(new LoginDtoResponse(session.getSession(voter2.newVoter()).getToken()))),
                 () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest3)), gson.toJson(new LoginDtoResponse(session.getSession(voter3.newVoter()).getToken()))),
-                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest4)), gson.toJson(new LoginDtoResponse(VoterExceptionErrorCode.VOTER_WRONG_PASSWORD.getMessage()))),
-                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest5)), gson.toJson(new LoginDtoResponse(WRONG_PASSWORD))),
-                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest6)), gson.toJson(new LoginDtoResponse(VoterExceptionErrorCode.VOTER_NOT_FOUND.getMessage()))),
-                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest7)), gson.toJson(new LoginDtoResponse(NULL_LOGINDTOREQUEST))),
-                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest8)), gson.toJson(new LoginDtoResponse(NULL_LOGINDTOREQUEST))),
-                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest9)), gson.toJson(new LoginDtoResponse(WRONG_LOGIN)))
+                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest4)), gson.toJson(new ErrorDtoResponse(VoterExceptionErrorCode.VOTER_WRONG_PASSWORD.getMessage()))),
+                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest5)), gson.toJson(new ErrorDtoResponse(WRONG_PASSWORD))),
+                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest6)), gson.toJson(new ErrorDtoResponse(VoterExceptionErrorCode.VOTER_NOT_FOUND.getMessage()))),
+                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest7)), gson.toJson(new ErrorDtoResponse(NULL_LOGINDTOREQUEST))),
+                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest8)), gson.toJson(new ErrorDtoResponse(NULL_LOGINDTOREQUEST))),
+                () -> assertEquals(server.loginVoter(gson.toJson(loginDtoRequest9)), gson.toJson(new ErrorDtoResponse(WRONG_LOGIN)))
         );
+        server.stopServer(null);
     }
 
     private String randomString() {
@@ -267,12 +315,4 @@ public class TestServer {
         }
         return stringBuilder.toString();
     }
-
-    private String requestToJson(RegisterVoterDtoRequest request) {
-        return gson.toJson(request);
-    }
-    private String responseToJson(RegisterVoterDtoResponse response) {
-        return gson.toJson(response);
-    }
-
 }

@@ -1,6 +1,5 @@
 package net.thumbtack.school.elections.server.service;
-import net.thumbtack.school.elections.server.database.Database;
-import net.thumbtack.school.elections.server.dto.request.RegisterVoterDtoRequest;
+import net.thumbtack.school.elections.server.daoimpl.DaoImpl;
 import net.thumbtack.school.elections.server.model.Voter;
 import org.junit.jupiter.api.Test;
 
@@ -9,9 +8,8 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestVoterService {
-    private final Database database = Database.getInstance();
-    private final SessionService session = SessionService.getInstance();
-    private final VoterService voterService = new VoterService();
+    private final SessionService sessionService = new SessionService();
+    private final VoterService voterService = new VoterService(new DaoImpl(null), sessionService);
     @Test
     public void registerVoterTest() throws VoterException {
         Voter voter1 = new Voter("Виткор", "Хорошев",
@@ -21,9 +19,9 @@ public class TestVoterService {
         Voter voter3 = new Voter("ВИТКОРРР", "Хорошев",
                 null, "Пригородная", 1, 188, "333333333333333", "111%111Aa");
         assertAll(
-                () -> assertEquals(voterService.registerVoter(voter1), session.getSession(voter1).getToken()),
-                () -> assertEquals(voterService.registerVoter(voter2), session.getSession(voter2).getToken()),
-                () -> assertEquals(voterService.registerVoter(voter3), session.getSession(voter3).getToken())
+                () -> assertEquals(voterService.registerVoter(voter1), sessionService.getSession(voter1).getToken()),
+                () -> assertEquals(voterService.registerVoter(voter2), sessionService.getSession(voter2).getToken()),
+                () -> assertEquals(voterService.registerVoter(voter3), sessionService.getSession(voter3).getToken())
         );
     }
 
@@ -33,7 +31,7 @@ public class TestVoterService {
                 null,randomString(), 1, 188, randomString(), "111%111Aa");
         voterService.logoutVoter(voterService.registerVoter(voter1));
         try {
-            session.getSession(voter1);
+            sessionService.getSession(voter1);
             fail();
         } catch (VoterException ex) {
             assertEquals(VoterExceptionErrorCode.VOTER_LOGOUT, ex.getErrorCode());
@@ -45,7 +43,7 @@ public class TestVoterService {
         Voter voter1 = new Voter(randomString(), randomString(),
                 null,randomString(), 1, 188, randomString(), "111%111Aa");
         voterService.registerVoter(voter1);
-        assertEquals(voterService.loginVoter(voter1.getLogin(), voter1.getPassword()), session.getSession(voter1).getToken());
+        assertEquals(voterService.loginVoter(voter1.getLogin(), voter1.getPassword()), sessionService.getSession(voter1).getToken());
         try {
             voterService.loginVoter(voter1.getLogin(), voter1.getPassword() + "12");
         } catch (VoterException ex) {

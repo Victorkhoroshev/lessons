@@ -1,36 +1,49 @@
 package net.thumbtack.school.elections.server;
 import com.google.gson.Gson;
-import net.thumbtack.school.elections.server.dto.request.LoginDtoRequest;
-import net.thumbtack.school.elections.server.dto.request.LogoutDtoRequest;
-import net.thumbtack.school.elections.server.dto.request.RegisterVoterDtoRequest;
-import net.thumbtack.school.elections.server.dto.request.Session;
+import net.thumbtack.school.elections.server.dao.Dao;
+import net.thumbtack.school.elections.server.daoimpl.DaoImpl;
+import net.thumbtack.school.elections.server.dto.request.*;
+import net.thumbtack.school.elections.server.dto.response.ErrorDtoResponse;
 import net.thumbtack.school.elections.server.dto.response.LoginDtoResponse;
 import net.thumbtack.school.elections.server.dto.response.LogoutDtoResponse;
 import net.thumbtack.school.elections.server.dto.response.RegisterVoterDtoResponse;
 import net.thumbtack.school.elections.server.model.Voter;
-import net.thumbtack.school.elections.server.service.ServerService;
+import net.thumbtack.school.elections.server.service.SessionService;
 import net.thumbtack.school.elections.server.service.VoterException;
 import net.thumbtack.school.elections.server.service.VoterService;
-import org.jetbrains.annotations.Nullable;
 
 
 //Server - класс, принимающий запросы (вызовы методов данного класса). В данном классе определены все сервисы.
 // Запросы приходят в методы класса Server в виде json- строки. Сервер возвращает ответ также в виде json-строки.
 
 public class Server {
-    private final Gson gson = new Gson();
-    private final VoterService voterService = new VoterService();
-// Производит всю необходимую инициализацию и запускает сервер.
+    //модификаторы для тестов - package
+    Gson gson;
+    VoterService voterService;
+    Dao<Voter> dao;
+    SessionService sessionService;
+
+    // Производит всю необходимую инициализацию и запускает сервер.
 //savedDataFileName - имя файла, в котором было сохранено состояние сервера.
 // Если savedDataFileName == null, восстановление состояния не производится, сервер стартует “с нуля”.
+//все сервисы инициализируются здесь
     public void startServer(String savedDataFileName) {
-        ServerService.startServer(savedDataFileName);
+        gson = new Gson();
+        dao = new DaoImpl(savedDataFileName);
+        sessionService = new SessionService();
+        voterService = new VoterService(dao, sessionService);
     }
 
 //Останавливает сервер и записывает все его содержимое в файл сохранения с именем savedDataFileName.
 // Если savedDataFileName == null, запись содержимого не производится.
     public void stopServer(String saveDataFileName) {
-        ServerService.stopServer(saveDataFileName);
+        if (saveDataFileName != null) {
+            dao.stopServer(saveDataFileName, gson);
+        }
+        gson = null;
+        dao = null;
+        voterService = null;
+        sessionService = null;
     }
 
 //Регистрирует избирателя на сервере. requestJsonString содержит данные об избирателе , необходимые для регистрации.
@@ -42,7 +55,7 @@ public class Server {
         RegisterVoterDtoRequest request = gson.fromJson(requestJsonString, RegisterVoterDtoRequest.class);
         if (!request.requiredFieldsIsNotNull() || requestJsonString == null) {
             response += "Пожалуйста, заполните все данные.";
-            return gson.toJson(new RegisterVoterDtoResponse(response));
+            return gson.toJson(new ErrorDtoResponse(response));
         }
         if (!request.isFirstNameValid()) {
             response += "Имя должно быть на кириллице, без пробелов, спец. символов и цифр.\n";
@@ -71,12 +84,12 @@ public class Server {
         }
         if (response.length() <  1){
             try {
-                response = voterService.registerVoter(request.newVoter());
+                return gson.toJson(new RegisterVoterDtoResponse(voterService.registerVoter(request.newVoter())));
             } catch (VoterException ex) {
-                response = ex.getLocalizedMessage();
+                return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
             }
         }
-        return gson.toJson(new RegisterVoterDtoResponse(response));
+        return gson.toJson(new ErrorDtoResponse(response));
     }
 
     public String loginVoter(String loginJsonString) {
@@ -84,7 +97,7 @@ public class Server {
         LoginDtoRequest request = gson.fromJson(loginJsonString, LoginDtoRequest.class);
         if (request == null || !request.requiredFieldsIsNotNull()) {
             response += "Пожалуйста, введите логин и пароль.";
-            return gson.toJson(new RegisterVoterDtoResponse(response));
+            return gson.toJson(new ErrorDtoResponse(response));
         }
         if(!request.isLoginValid()) {
             response += "Длинна логина должна быть не меньше 9 символо.\n";
@@ -95,23 +108,28 @@ public class Server {
         }
         if (response.length() < 1) {
             try {
-                response = voterService.loginVoter(request.getLogin(), request.getPassword());
+                return gson.toJson(new LoginDtoResponse(voterService.loginVoter(request.getLogin(),
+                        request.getPassword())));
             } catch (VoterException ex) {
-                response = ex.getLocalizedMessage();
+                return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
             }
         }
-        return gson.toJson(new LoginDtoResponse(response));
+        return gson.toJson(new ErrorDtoResponse(response));
     }
 //Если избиратель выполняет операцию выхода (метод logout) с сервера,
 // его токен впредь считается недействительным (невалидным).
 // При попытке выполнить любой метод с предъявлением этого токена должен возвращаться json с ошибкой.
     public String logoutVoter(String logoutJsonString) throws VoterException {
-        String response = "Что-то пошле не так.";
+        String response = "Что-то пошло не так.";
         LogoutDtoRequest request = gson.fromJson(logoutJsonString, LogoutDtoRequest.class);
         if (request == null || !request.requiredFieldsIsNotNull()) {
-            return gson.toJson(new LogoutDtoResponse(response));
+            return gson.toJson(new ErrorDtoResponse(response));
         }
-        return gson.toJson(new LoginDtoResponse(voterService.logoutVoter(request.getToken())));
+        try {
+            return gson.toJson(new LogoutDtoResponse(voterService.logoutVoter(request.getToken())));
+        } catch (VoterException ex) {
+            return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
+        }
     }
 
 }

@@ -1,6 +1,8 @@
 package net.thumbtack.school.elections.server.model;
 
 import org.jetbrains.annotations.Nullable;
+
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -10,7 +12,7 @@ import java.util.Objects;
 // содержать поля и методы для получения и переопределения этих полей (геттеры и сеттеры).
 // Классы модели не должны содержать методов, выполняющих какие-то действия (запись в файл, в базу данных и т.д.)
 // - этим должны заниматься методы класса сервиса с помощью DAO
-public class Voter {
+public class Voter implements Serializable {
     //фамилию, имя и отчество (последнее - если имеется)
     //домашний адрес : улица, дом, квартира (последнее - если имеется)
     //логин и пароль для входа на сервер.
@@ -86,13 +88,12 @@ public class Voter {
         return password;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Voter voter = (Voter) o;
-        return house == voter.house && Objects.equals(firstName, voter.firstName) && Objects.equals(lastName, voter.lastName) && Objects.equals(patronymic, voter.patronymic) && Objects.equals(street, voter.street) && Objects.equals(apartment, voter.apartment);
+        return Objects.equals(firstName, voter.firstName) && Objects.equals(lastName, voter.lastName) && Objects.equals(patronymic, voter.patronymic) && Objects.equals(street, voter.street) && Objects.equals(house, voter.house) && Objects.equals(apartment, voter.apartment);
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestDaoImpl {
-    private DaoImpl dao = new DaoImpl();
+    private DaoImpl dao = new DaoImpl(null);
     @Test
     public void saveTest() throws VoterException {
         Voter voter = new Voter("Виктор", "Хорошев",
