@@ -1,8 +1,5 @@
 package net.thumbtack.school.elections.server.dto.request;
 
-import net.thumbtack.school.elections.server.model.Voter;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Pattern;
 
 //dto - пакет с классами, описывающими запросы и ответы. Например,
