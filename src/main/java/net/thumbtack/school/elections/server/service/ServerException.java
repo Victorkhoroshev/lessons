@@ -1,10 +1,10 @@
 package net.thumbtack.school.elections.server.service;
 
-public class VoterException extends Exception {
+public class ServerException extends Exception {
 
-    private final VoterExceptionErrorCode voterExceptionErrorCode;
+    private final ExceptionErrorCode voterExceptionErrorCode;
 
-    public VoterException(VoterExceptionErrorCode voterExceptionErrorCode) {
+    public ServerException(ExceptionErrorCode voterExceptionErrorCode) {
         this.voterExceptionErrorCode = voterExceptionErrorCode;
     }
     @Override
@@ -12,7 +12,7 @@ public class VoterException extends Exception {
         return voterExceptionErrorCode.getMessage();
     }
 
-    public VoterExceptionErrorCode getErrorCode() {
+    public ExceptionErrorCode getErrorCode() {
         return voterExceptionErrorCode;
     }
 

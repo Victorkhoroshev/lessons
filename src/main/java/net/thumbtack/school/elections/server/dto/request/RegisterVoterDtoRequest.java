@@ -2,7 +2,6 @@ package net.thumbtack.school.elections.server.dto.request;
 
 import net.thumbtack.school.elections.server.model.Voter;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.regex.Pattern;
 
 public class RegisterVoterDtoRequest {
@@ -13,7 +12,7 @@ public class RegisterVoterDtoRequest {
     private final String street;
     private final Integer house;
     @Nullable
-    private final Integer apartment;//может не быть
+    private final Integer apartment;
     private final String login;
     private final String password;
 
@@ -27,40 +26,6 @@ public class RegisterVoterDtoRequest {
         this.apartment = apartment;
         this.login = login;
         this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    @Nullable
-    public String getPatronymic() {
-        return patronymic;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public int getHouse() {
-        return house;
-    }
-
-    @Nullable
-    public Integer getApartment() {
-        return apartment;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public boolean isFirstNameValid() {

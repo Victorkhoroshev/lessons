@@ -9,21 +9,21 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionService {
     static final Map<Voter, Session> sessions = new ConcurrentHashMap<>();
 
-    public Session getSession(Voter voter) throws VoterException {
+    public Session getSession(Voter voter) throws ServerException {
         if (sessions.containsKey(voter)) {
             return sessions.get(voter);
         } else {
-            throw new VoterException(VoterExceptionErrorCode.VOTER_LOGOUT);
+            throw new ServerException(ExceptionErrorCode.VOTER_LOGOUT);
         }
     }
 
-    public Voter getVoter(String token) throws VoterException {
+    public Voter getVoter(String token) throws ServerException {
         for (Map.Entry<Voter, Session> entry : sessions.entrySet()) {
             if (entry.getValue().getToken().equals(token)) {
                 return entry.getKey();
             }
         }
-        throw new VoterException(VoterExceptionErrorCode.VOTER_LOGOUT);
+        throw new ServerException(ExceptionErrorCode.VOTER_LOGOUT);
     }
 
     public String loginVoter(Voter voter) {
@@ -31,8 +31,7 @@ public class SessionService {
         return sessions.get(voter).getToken();
     }
 
-    public void logoutVoter(String token) throws VoterException {
+    public void logout(String token) throws ServerException {
         sessions.remove(getVoter(token));
     }
-
 }

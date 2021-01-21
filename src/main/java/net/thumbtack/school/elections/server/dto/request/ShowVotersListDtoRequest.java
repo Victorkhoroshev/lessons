@@ -1,10 +1,9 @@
 package net.thumbtack.school.elections.server.dto.request;
 
-
-public class Session {
+public class ShowVotersListDtoRequest {
     private String token;
 
-    public Session(String token) {
+    public ShowVotersListDtoRequest(String token) {
         setToken(token);
     }
 
@@ -14,5 +13,9 @@ public class Session {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public boolean requiredFieldsIsNotNull() {
+        return token != null;
     }
 }

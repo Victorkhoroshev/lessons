@@ -1,6 +1,7 @@
 package net.thumbtack.school.elections.server.dto.response;
 
 public class RegisterVoterDtoResponse {
+
     private String token;
 
     public RegisterVoterDtoResponse(String token) {
