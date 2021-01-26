@@ -6,8 +6,6 @@ import net.thumbtack.school.elections.server.model.Candidate;
 import net.thumbtack.school.elections.server.service.ExceptionErrorCode;
 import net.thumbtack.school.elections.server.service.ServerException;
 
-import java.util.Set;
-
 public class CandidateDaoImpl implements CandidateDao<Candidate> {
 
     @Override

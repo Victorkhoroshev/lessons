@@ -1,8 +1,11 @@
 package net.thumbtack.school.elections.server.model;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Candidate {
+public class Candidate implements Serializable {
+    private static final long serialVersionUID = 2L;
+
     private final Voter voter;
 
     public Candidate(Voter candidate) {

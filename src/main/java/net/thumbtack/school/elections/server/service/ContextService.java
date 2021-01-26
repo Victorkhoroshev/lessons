@@ -7,21 +7,15 @@ import net.thumbtack.school.elections.server.model.Context;
 public class ContextService {
     private final Context context;
     private final ContextDao<Context> contextDao;
-    private final CandidateService candidateService;
-    private final IdeaService ideaService;
 
-    public ContextService(CandidateService candidateService, IdeaService ideaService) {
+    public ContextService() {
         context = Context.getInstance();
         contextDao = new ContextDaoImpl();
-        this.candidateService = candidateService;
-        this.ideaService = ideaService;
     }
 
     public ContextService(Context context) {
         this.context = context;
         contextDao = new ContextDaoImpl(context);
-        candidateService = context.getCandidateService();
-        ideaService = context.getIdeaService();
     }
 
     public void sync() {

@@ -1,23 +1,29 @@
 package net.thumbtack.school.elections.server.model;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class Idea {
-    private Voter author;
+public class Idea implements Comparable<Idea>, Serializable {
+    private @Nullable Voter author;
+    private final String key;
     private final String textOfIdea;
     private int sum;
-    private int count;
-    private int rating;
+    private Float rating;
     private Map<Voter, Integer> votedVoters;
 
-    public Idea(Voter author, String idea) {
+    public Idea(String key, Voter author, String idea) {
         setAuthor(author);
+        this.key = key;
         this.textOfIdea = idea;
-        sum = 0;
-        count = 0;
-        setRating(5, author);
+        setRating(5);
+        setSum(5);
         setVotedVoters(new HashMap<>());
+        votedVoters.put(author, 5);
     }
 
     private void setVotedVoters(Map<Voter, Integer> votedVoters) {
@@ -28,30 +34,19 @@ public class Idea {
         return votedVoters;
     }
 
-    public void setAuthor(Voter author) {
+    public void setAuthor(@Nullable Voter author) {
         this.author = author;
     }
 
-    public void setRating(int rating, Voter voter) {
-        count++;
-        this.rating = (sum + rating) / count;
-        sum += sum + rating;
-        votedVoters.put(voter, rating);
+    public String getKey() {
+        return key;
     }
 
-    public void changeRating(Voter voter , int rating) {
-        this.rating = (sum + rating - votedVoters.get(voter)) / count;
-        votedVoters.put(voter, rating);
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 
-    public void removeRating(Voter voter) {
-        count--;
-        this.rating = (sum - votedVoters.get(voter)) / count;
-        votedVoters.remove(voter);
-    }
-
-
-    public Voter getAuthor() {
+    public @Nullable Voter getAuthor() {
         return author;
     }
 
@@ -59,7 +54,33 @@ public class Idea {
         return textOfIdea;
     }
 
-    public int getRating() {
+    public Float getRating() {
         return rating;
+    }
+
+    public int getSum() {
+        return sum;
+    }
+
+    public void setSum(int sum) {
+        this.sum = sum;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Idea idea = (Idea) o;
+        return key.equals(idea.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key);
+    }
+
+    @Override
+    public int compareTo(@NotNull Idea idea) {
+        return rating.compareTo(idea.getRating());
     }
 }

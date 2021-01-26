@@ -5,9 +5,9 @@ import java.util.List;
 
 public class ConfirmationCandidacyDtoRequest {
     private String token;
-    private List<Idea> candidateIdeas;
+    private List<String> candidateIdeas;
 
-    public ConfirmationCandidacyDtoRequest(String token, List<Idea> candidateIdeas) {
+    public ConfirmationCandidacyDtoRequest(String token, List<String> candidateIdeas) {
         setToken(token);
         setCandidateIdeas(candidateIdeas);
     }
@@ -20,11 +20,11 @@ public class ConfirmationCandidacyDtoRequest {
         this.token = token;
     }
 
-    public List<Idea> getCandidateIdeas() {
+    public List<String> getCandidateIdeas() {
         return candidateIdeas;
     }
 
-    public void setCandidateIdeas(List<Idea> candidateIdeas) {
+    public void setCandidateIdeas(List<String> candidateIdeas) {
         this.candidateIdeas = candidateIdeas;
     }
 

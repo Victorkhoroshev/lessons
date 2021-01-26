@@ -1,9 +1,9 @@
 package net.thumbtack.school.elections.server.dto.request;
 
-public class ShowVotersListDtoRequest {
+public class GetVotersListDtoRequest {
     private String token;
 
-    public ShowVotersListDtoRequest(String token) {
+    public GetVotersListDtoRequest(String token) {
         setToken(token);
     }
 

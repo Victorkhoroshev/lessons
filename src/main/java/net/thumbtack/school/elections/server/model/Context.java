@@ -1,15 +1,12 @@
 package net.thumbtack.school.elections.server.model;
 
-import net.thumbtack.school.elections.server.database.Database;
 import net.thumbtack.school.elections.server.service.CandidateService;
 import net.thumbtack.school.elections.server.service.IdeaService;
-
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-public class Context {
+public class Context implements Serializable {
     private static Context context;
     private Set<Candidate> candidateSet;
     private Set<Voter> voterSet;

@@ -3,16 +3,17 @@ package net.thumbtack.school.elections.server.service;
 import net.thumbtack.school.elections.server.dao.CandidateDao;
 import net.thumbtack.school.elections.server.daoimpl.CandidateDaoImpl;
 import net.thumbtack.school.elections.server.model.Candidate;
-import net.thumbtack.school.elections.server.model.Context;
 import net.thumbtack.school.elections.server.model.Idea;
 import net.thumbtack.school.elections.server.model.Voter;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-public class CandidateService {
-    private final CandidateDao<Candidate> dao;
+public class CandidateService implements Serializable {
+    private final transient CandidateDao<Candidate> dao;
     private final Map<Candidate, List<Idea>> ideas;
 
     public CandidateService() {
@@ -21,7 +22,7 @@ public class CandidateService {
     }
 
     //выдвижение кандидата
-    public void addCandidate(Voter candidate) throws ServerException {
+    public void addCandidate(Voter candidate) {
         if (!dao.contains(candidate.getLogin())) {
             dao.save(new Candidate(candidate));
         }
@@ -42,20 +43,15 @@ public class CandidateService {
         dao.delete(dao.get(voter.getLogin()));
     }
 
-    public boolean isCandidate(Voter voter) throws ServerException {
-        return dao.contains(voter.getLogin());
+    public boolean isCandidate(Voter voter) {
+        return ideas.containsKey(new Candidate(voter));
     }
 
-    public void logout(Voter voter) throws ServerException {
-        if (dao.contains(voter.getLogin())) {
-            throw new ServerException(ExceptionErrorCode.CANDIDATE_NOT_WITHDRAW_CANDIDACY);
-        }
-    }
     public void addIdea(Voter voter, Idea idea) throws ServerException {
         ideas.get(dao.get(voter.getLogin())).add(idea);
     }
     public void removeIdea(Voter voter, Idea idea) throws ServerException {
-        if (!idea.getAuthor().equals(voter)) {
+        if (idea.getAuthor() != voter) {
             ideas.get(dao.get(voter.getLogin())).remove(idea);
         }
     }
@@ -63,4 +59,16 @@ public class CandidateService {
         return ideas;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CandidateService that = (CandidateService) o;
+        return ideas.equals(that.ideas);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dao, ideas);
+    }
 }

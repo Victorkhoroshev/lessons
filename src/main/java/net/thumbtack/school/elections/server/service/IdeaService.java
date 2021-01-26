@@ -2,84 +2,136 @@ package net.thumbtack.school.elections.server.service;
 
 import net.thumbtack.school.elections.server.model.Idea;
 import net.thumbtack.school.elections.server.model.Voter;
+import java.io.Serializable;
 import java.util.*;
 
-public class IdeaService {
-    private final Map<String, Idea> ideas;
+public class IdeaService implements Serializable {
+    private final List<Idea> ideas;
 
     public IdeaService() {
-        ideas = new HashMap<>();
+        ideas = new ArrayList<>();
     }
 
-    public List<Idea> getIdeas() {
-        List<Idea> sortedList = (List<Idea>) ideas.values();
-        sortedList.sort(Comparator.comparing(Idea::getRating));
-        return sortedList;
+    public Map<Idea, Float> getIdeas() {
+        Map<Idea, Float> sortedMap = new TreeMap<>();
+        for (Idea idea : ideas) {
+            sortedMap.put(idea, idea.getRating());
+        }
+        return sortedMap;
     }
 
-    public String addIdea(Voter voter, String idea) {
-        String token = UUID.randomUUID().toString();
-        ideas.put(token, new Idea(voter, idea));
-        return token;
+    public void addIdea(Voter voter, String idea) {
+        ideas.add(new Idea(UUID.randomUUID().toString(), voter, idea));
     }
 
     public void setIdeaCommunity(Voter voter) {
-        for (Idea idea: ideas.values()) {
-            if (idea.getAuthor().equals(voter)) {
+        for (Idea idea: ideas) {
+            if (idea.getAuthor() != null && idea.getAuthor().equals(voter)) {
                 idea.setAuthor(null);
             }
         }
     }
 
-    public void estimate(String ideasToken, int rating, Voter voter) throws ServerException {
+    public void estimate(String ideaKey, int rating, Voter voter) throws ServerException {
         if (rating < 1 || rating > 5) {
             throw new ServerException(ExceptionErrorCode.RATING_INCORRECT);
         }
-        if (!ideas.get(ideasToken).getVotedVoters().containsKey(voter)) {
-            ideas.get(ideasToken).setRating(rating, voter);
+        for (Idea idea : ideas) {
+            if (idea.getKey().equals(ideaKey) && !idea.getVotedVoters().containsKey(voter)) {
+                idea.getVotedVoters().put(voter, rating);
+                idea.setSum(idea.getSum() + rating);
+                float newRating = (float) idea.getSum() / idea.getVotedVoters().size();
+                idea.setRating(newRating);
+            }
         }
     }
 
-    public void changeRating(Voter voter, String ideasToken, int rating) throws ServerException {
+    public void changeRating(Voter voter, String ideaKey, int rating) throws ServerException {
         if (rating < 1 || rating > 5) {
             throw new ServerException(ExceptionErrorCode.RATING_INCORRECT);
         }
-        if (!ideas.get(ideasToken).getAuthor().equals(voter)) {
-            ideas.get(ideasToken).changeRating(voter, rating);
+        for (Idea idea : ideas) {
+            if (idea.getKey().equals(ideaKey) && idea.getVotedVoters().containsKey(voter) && idea.getAuthor() != voter) {
+                idea.setSum(idea.getSum() + rating - idea.getVotedVoters().get(voter));
+                idea.getVotedVoters().put(voter, rating);
+                float newRating = (float) idea.getSum() / idea.getVotedVoters().size();
+                idea.setRating(newRating);
+                break;
+            }
         }
     }
 
-    public void removeRating(Voter voter, String ideasToken) {
-        if (!ideas.get(ideasToken).getAuthor().equals(voter)) {
-            ideas.get(ideasToken).removeRating(voter);
+    public void removeRating(Voter voter, String ideaKey) {
+        for(Idea idea : ideas) {
+            if (idea.getKey().equals(ideaKey) && idea.getVotedVoters().containsKey(voter) && idea.getAuthor() != voter) {
+                idea.setSum(idea.getSum() - idea.getVotedVoters().get(voter));
+                idea.getVotedVoters().remove(voter);
+                float newRating = (float) idea.getSum() / idea.getVotedVoters().size();
+                idea.setRating(newRating);
+                break;
+            }
         }
     }
 
     public void removeAllRating(Voter voter) {
-        for (Idea idea : ideas.values()) {
-           if (idea.getVotedVoters().containsKey(voter) && !idea.getAuthor().equals(voter)) {
-               idea.removeRating(voter);
-           }
+        for (Idea idea : ideas) {
+            if (idea.getVotedVoters().containsKey(voter) && idea.getAuthor() != voter) {
+                idea.setSum(idea.getSum() - idea.getVotedVoters().get(voter));
+                idea.getVotedVoters().remove(voter);
+                float newRating = (float) idea.getSum() / idea.getVotedVoters().size();
+                idea.setRating(newRating);
+                idea.getVotedVoters().remove(voter);
+            }
         }
     }
 
-    public void addAllIdeas(List<Idea> ideas) {
-        for(Idea idea : ideas) {
-            this.ideas.put(UUID.randomUUID().toString(), idea);
+    public void addAllIdeas(Voter voter, List<String> ideas) {
+        for (String idea : ideas) {
+            addIdea(voter, idea);
         }
     }
 
-    public Idea getIdea(String ideaToken) {
-        return ideas.get(ideaToken);
+    public Idea getIdea(String ideaKey) throws ServerException {
+        for (Idea idea : ideas) {
+            if (idea.getKey().equals(ideaKey)) {
+                return idea;
+            }
+        }
+        throw new ServerException(ExceptionErrorCode.IDEA_NOT_FOUND);
     }
 
-    public List<String> getAllVotersIdeas(List<String> voters) {
-        List<String> voterIdeas = new ArrayList<>();
-        for (Idea idea : ideas.values()) {
-            if (voters.contains(idea.getAuthor().getLogin())) {
-                voterIdeas.add(idea.getTextOfIdea());
+    public List<Idea> getAllVotersIdeas(List<String> logins) {
+        List<Idea> voterIdeas = new ArrayList<>();
+        for (Idea idea : ideas) {
+            if (idea.getAuthor() != null && logins.contains(idea.getAuthor().getLogin())) {
+                voterIdeas.add(idea);
+            }
+            if (idea.getAuthor() == null && logins.contains(null)) {
+                voterIdeas.add(idea);
             }
         }
         return voterIdeas;
+    }
+
+    public String getKey(Voter voter, String text) throws ServerException {
+        for (Idea idea : ideas) {
+            if (idea.getAuthor() == voter && idea.getTextOfIdea().equals(text)) {
+                return idea.getKey();
+            }
+        }
+        throw new ServerException(ExceptionErrorCode.IDEA_NOT_FOUND);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IdeaService that = (IdeaService) o;
+        return ideas.equals(that.ideas);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ideas);
     }
 }

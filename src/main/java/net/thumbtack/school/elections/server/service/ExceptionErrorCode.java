@@ -7,8 +7,8 @@ public enum ExceptionErrorCode {
     VOTER_NOT_FOUND("Пользователь не найден."),
     VOTER_LOGIN_ALREADY_EXISTS("Такой логин уже используется."),
     VOTER_WRONG_PASSWORD("Неверный пароль."),
-    CANDIDATE_NOT_WITHDRAW_CANDIDACY("Невозможно разлогиниться, для начала, снимите свою кандидатуру с выборов."),
-    CANDIDATE_NOT_FOUND("Кандидат не найден");
+    CANDIDATE_NOT_FOUND("Кандидат не найден"),
+    IDEA_NOT_FOUND("Идея не найдена");
 
     private final String message;
 

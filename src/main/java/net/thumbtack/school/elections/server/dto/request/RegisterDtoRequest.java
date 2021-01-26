@@ -4,7 +4,7 @@ import net.thumbtack.school.elections.server.model.Voter;
 import org.jetbrains.annotations.Nullable;
 import java.util.regex.Pattern;
 
-public class RegisterVoterDtoRequest {
+public class RegisterDtoRequest {
     private final String firstName;
     private final String lastName;
     @Nullable
@@ -16,8 +16,8 @@ public class RegisterVoterDtoRequest {
     private final String login;
     private final String password;
 
-    public RegisterVoterDtoRequest (String firstName, String lastName, @Nullable String patronymic, String street, Integer house,
-                                    @Nullable Integer apartment, String login, String password) {
+    public RegisterDtoRequest(String firstName, String lastName, @Nullable String patronymic, String street, Integer house,
+                              @Nullable Integer apartment, String login, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;

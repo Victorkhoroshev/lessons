@@ -8,19 +8,8 @@ public final class Database {
     private static Set<Candidate> candidateSet;
     private static Set<Voter> voterSet;
     private static List<String> logins;
-    private static volatile Database database;
 
-    public static Database getInstance() {
-        Database result = database;
-        if (result != null) {
-            return result;
-        }
-        synchronized (Database.class) {
-            if (database == null) {
-                database = new Database();
-            }
-            return database;
-        }
+    private Database() {
     }
 
     public static Set<Candidate> getCandidateSet() {

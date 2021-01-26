@@ -4,11 +4,11 @@ import java.util.List;
 
 public class GetAllVotersIdeasDtoRequest {
     private String token;
-    private List<String> voterLogins;
+    private List<String> logins;
 
-    public GetAllVotersIdeasDtoRequest(String token, List<String> voterLogins) {
+    public GetAllVotersIdeasDtoRequest(String token, List<String> logins) {
         setToken(token);
-        setVoterLogins(voterLogins);
+        setLogins(logins);
     }
 
     public String getToken() {
@@ -19,15 +19,15 @@ public class GetAllVotersIdeasDtoRequest {
         this.token = token;
     }
 
-    public List<String> getVoterLogins() {
-        return voterLogins;
+    public List<String> getLogins() {
+        return logins;
     }
 
-    public void setVoterLogins(List<String> voterLogins) {
-        this.voterLogins = voterLogins;
+    public void setLogins(List<String> logins) {
+        this.logins = logins;
     }
 
     public boolean requiredFieldsIsNotNull(){
-        return token != null && voterLogins.isEmpty();
+        return token != null && logins.isEmpty();
     }
 }

@@ -4,9 +4,9 @@ import net.thumbtack.school.elections.server.service.ServerException;
 import java.util.Set;
 
 public interface VoterDao<T> {
-    T getVoter(String s) throws ServerException;
+    T get(String s) throws ServerException;
 
-    Set<T> getAllVoters();
+    Set<T> getAll();
 
-    void saveVoter(T t) throws ServerException;
+    void save(T t) throws ServerException;
 }

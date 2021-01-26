@@ -2,11 +2,11 @@ package net.thumbtack.school.elections.server.dto.request;
 
 public class RemoveIdeaDtoRequest {
     private String token;
-    private String ideaToken;
+    private String ideaKey;
 
-    public RemoveIdeaDtoRequest(String token, String ideaToken) {
+    public RemoveIdeaDtoRequest(String token, String ideaKey) {
         setToken(token);
-        setIdeaToken(ideaToken);
+        setIdeaKey(ideaKey);
     }
 
     public String getToken() {
@@ -17,15 +17,15 @@ public class RemoveIdeaDtoRequest {
         this.token = token;
     }
 
-    public String getIdeaToken() {
-        return ideaToken;
+    public String getIdeaKey() {
+        return ideaKey;
     }
 
-    public void setIdeaToken(String ideaToken) {
-        this.ideaToken = ideaToken;
+    public void setIdeaKey(String ideaKey) {
+        this.ideaKey = ideaKey;
     }
 
     public boolean requiredFieldsIsNotNull() {
-        return token != null && ideaToken != null;
+        return token != null && ideaKey != null;
     }
 }

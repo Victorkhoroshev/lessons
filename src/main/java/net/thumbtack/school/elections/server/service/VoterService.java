@@ -20,21 +20,21 @@ public class VoterService {
      * @return generated token
      * @throws ServerException
      */
-    public String registerVoter(Voter voter) throws ServerException {
-        dao.saveVoter(voter);
+    public String register(Voter voter) throws ServerException {
+        dao.save(voter);
         return sessionService.loginVoter(voter);
     }
 
-    public Set<String> getAllVoters() {
+    public Set<String> getAll() {
         Set<String> voters = new HashSet<>();
-        for (Voter voter: dao.getAllVoters()) {
+        for (Voter voter: dao.getAll()) {
             voters.add(voter.getLastName() + " " + voter.getFirstName());
         }
         return voters;
     }
 
-    public String loginVoter(String login, String password) throws ServerException {
-        Voter voter = dao.getVoter(login);
+    public String login(String login, String password) throws ServerException {
+        Voter voter = dao.get(login);
         if (!voter.getPassword().equals(password)) {
             throw new ServerException(ExceptionErrorCode.VOTER_WRONG_PASSWORD);
         }
@@ -45,7 +45,7 @@ public class VoterService {
         sessionService.logout(token);
     }
 
-    public Voter getVoter(String login) throws ServerException {
-        return dao.getVoter(login);
+    public Voter get(String login) throws ServerException {
+        return dao.get(login);
     }
 }

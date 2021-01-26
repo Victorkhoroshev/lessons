@@ -1,12 +1,12 @@
 package net.thumbtack.school.elections.server.dto.request;
 
 public class EstimateIdeaDtoRequest {
-    private String ideasToken;
+    private String ideaKey;
     private int rating;
     private String token;
 
-    public EstimateIdeaDtoRequest(String ideasToken, int rating, String token) {
-        setIdeasToken(ideasToken);
+    public EstimateIdeaDtoRequest(String ideaKey, int rating, String token) {
+        setIdeaKey(ideaKey);
         setRating(rating);
         setToken(token);
     }
@@ -27,12 +27,12 @@ public class EstimateIdeaDtoRequest {
         this.token = token;
     }
 
-    public String getIdeasToken() {
-        return ideasToken;
+    public String getIdeaKey() {
+        return ideaKey;
     }
 
-    public void setIdeasToken(String ideasToken) {
-        this.ideasToken = ideasToken;
+    public void setIdeaKey(String ideaKey) {
+        this.ideaKey = ideaKey;
     }
 
     public boolean requiredFieldsIsNotNull() {

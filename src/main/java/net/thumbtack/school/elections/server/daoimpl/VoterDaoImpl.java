@@ -8,9 +8,8 @@ import net.thumbtack.school.elections.server.service.ExceptionErrorCode;
 import java.util.*;
 
 public class VoterDaoImpl implements VoterDao<Voter> {
-
     @Override
-    public Voter getVoter(String login) throws ServerException {
+    public Voter get(String login) throws ServerException {
         Voter voter;
         for (Voter value : Database.getVoterSet()) {
             voter = value;
@@ -22,12 +21,12 @@ public class VoterDaoImpl implements VoterDao<Voter> {
     }
 
     @Override
-    public Set<Voter> getAllVoters() {
+    public Set<Voter> getAll() {
         return Database.getVoterSet();
     }
 
     @Override
-    public void saveVoter(Voter voter) throws ServerException {
+    public void save(Voter voter) throws ServerException {
         if (Database.getVoterSet().contains(voter)){
             throw new ServerException(ExceptionErrorCode.VOTER_ALREADY_EXISTS);
         }

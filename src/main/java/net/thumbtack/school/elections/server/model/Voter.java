@@ -10,12 +10,10 @@ public class Voter implements Serializable {
 
     private final String firstName;
     private final String lastName;
-    @Nullable
-    private final String patronymic;
+    private final @Nullable String patronymic;
     private final String street;
     private final Integer house;
-    @Nullable
-    private final Integer apartment;
+    private final @Nullable Integer apartment;
     private final String login;
     private final String password;
     private boolean isHasOwnCandidate;

@@ -5,6 +5,8 @@ import net.thumbtack.school.elections.server.dto.response.*;
 import net.thumbtack.school.elections.server.model.Context;
 import net.thumbtack.school.elections.server.service.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 //Server - класс, принимающий запросы (вызовы методов данного класса). В данном классе определены все сервисы.
@@ -39,7 +41,7 @@ public class Server {
         } else {
             ideaService = new IdeaService();
             candidateService = new CandidateService();
-            contextService = new ContextService(candidateService, ideaService);
+            contextService = new ContextService();
         }
     }
 
@@ -67,10 +69,10 @@ public class Server {
 // Метод при успешном выполнении возвращает json с единственным элементом “token”.
 // Если же команду по какой-то причине выполнить нельзя, возвращает json с элементом “error”
 //контроллер проверяет валидность входа
-    public String registerVoter(String requestJsonString) {
+    public String register(String requestJsonString) {
         String response = "";
-        RegisterVoterDtoRequest request = gson.fromJson(requestJsonString, RegisterVoterDtoRequest.class);
-        if (!request.requiredFieldsIsNotNull() || requestJsonString == null) {
+        RegisterDtoRequest request = gson.fromJson(requestJsonString, RegisterDtoRequest.class);
+        if (requestJsonString == null || !request.requiredFieldsIsNotNull()) {
             response += "Пожалуйста, заполните все данные.";
             return gson.toJson(new ErrorDtoResponse(response));
         }
@@ -101,7 +103,7 @@ public class Server {
         }
         if (response.length() <  1){
             try {
-                return gson.toJson(new RegisterVoterDtoResponse(voterService.registerVoter(request.newVoter())));
+                return gson.toJson(new RegisterVoterDtoResponse(voterService.register(request.newVoter())));
             } catch (ServerException ex) {
                 return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
             }
@@ -109,7 +111,7 @@ public class Server {
         return gson.toJson(new ErrorDtoResponse(response));
     }
 
-    public String loginVoter(String requestJsonString) {
+    public String login(String requestJsonString) {
         String response = "";
         LoginDtoRequest request = gson.fromJson(requestJsonString, LoginDtoRequest.class);
         if (request == null || !request.requiredFieldsIsNotNull()) {
@@ -125,7 +127,7 @@ public class Server {
         }
         if (response.length() < 1) {
             try {
-                return gson.toJson(new LoginDtoResponse(voterService.loginVoter(request.getLogin(),
+                return gson.toJson(new LoginDtoResponse(voterService.login(request.getLogin(),
                         request.getPassword())));
             } catch (ServerException ex) {
                 return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
@@ -142,11 +144,11 @@ public class Server {
             return gson.toJson(new ErrorDtoResponse(NULL_VALUE));
         }
         try {
-            ideaService.setIdeaCommunity(sessionService.getVoter(request.getToken()));
             if (candidateService.isCandidate(sessionService.getVoter(request.getToken()))) {
-                candidateService.logout(sessionService.getVoter(request.getToken()));
-                sessionService.logout(request.getToken());
+                return gson.toJson(new ErrorDtoResponse("Невозможно разлогиниться, для начала," +
+                        " снимите свою кандидатуру с выборов."));
             } else {
+                ideaService.setIdeaCommunity(sessionService.getVoter(request.getToken()));
                 ideaService.removeAllRating(sessionService.getVoter(request.getToken()));
                 voterService.logout(request.getToken());
             }
@@ -157,12 +159,12 @@ public class Server {
     }
 
     //запросить список всех избирателей
-    public String votersList(String requestJsonString) {
-        ShowVotersListDtoRequest request = gson.fromJson(requestJsonString, ShowVotersListDtoRequest.class);
+    public String getVotersList(String requestJsonString) {
+        GetVotersListDtoRequest request = gson.fromJson(requestJsonString, GetVotersListDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
                 sessionService.getVoter(request.getToken());
-                return gson.toJson(new ShowVotersListDtoResponse(voterService.getAllVoters()));
+                return gson.toJson(new GetVotersListDtoResponse(voterService.getAll()));
             } catch (ServerException ex) {
                 return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
             }
@@ -188,7 +190,7 @@ public class Server {
         if (request != null && !request.requiredFieldsIsNotNull()) {
             try {
                 if (!sessionService.getVoter(request.getToken()).isHasOwnCandidate()) {
-                    candidateService.addCandidate(voterService.getVoter(request.getCandidateLogin()));
+                    candidateService.addCandidate(voterService.get(request.getCandidateLogin()));
                     sessionService.getVoter(request.getToken()).setHasOwnCandidate(true);
                     return EMPTY_JSON;
                 }
@@ -204,8 +206,10 @@ public class Server {
                 ConfirmationCandidacyDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
-                candidateService.confirmationCandidacy(sessionService.getVoter(request.getToken()), request.getCandidateIdeas());
-                ideaService.addAllIdeas(request.getCandidateIdeas());
+                ideaService.addAllIdeas(sessionService.getVoter(request.getToken()), request.getCandidateIdeas());
+                List<String> list = new ArrayList<>();
+                list.add(sessionService.getVoter(request.getToken()).getLogin());
+                candidateService.confirmationCandidacy(sessionService.getVoter(request.getToken()), ideaService.getAllVotersIdeas(list));
                 return EMPTY_JSON;
             } catch (ServerException ex) {
                 return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
@@ -249,7 +253,7 @@ public class Server {
         EstimateIdeaDtoRequest request = gson.fromJson(requestJsonString, EstimateIdeaDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
-                ideaService.estimate(request.getIdeasToken(), request.getRating(), sessionService.getVoter(request.getToken()));
+                ideaService.estimate(request.getIdeaKey(), request.getRating(), sessionService.getVoter(request.getToken()));
                 return EMPTY_JSON;
             } catch (ServerException ex) {
                 return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
@@ -263,7 +267,7 @@ public class Server {
         ChangeRatingDtoRequest request = gson.fromJson(requestJsonString, ChangeRatingDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
-                ideaService.changeRating(sessionService.getVoter(request.getToken()), request.getIdeasToken(), request.getRating());
+                ideaService.changeRating(sessionService.getVoter(request.getToken()), request.getIdeaKey(), request.getRating());
                 return EMPTY_JSON;
             } catch (ServerException ex) {
                 return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
@@ -276,7 +280,7 @@ public class Server {
         RemoveRatingDtoRequest request = gson.fromJson(requestJsonString, RemoveRatingDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
-                ideaService.removeRating(sessionService.getVoter(request.getToken()), request.getIdeaToken());
+                ideaService.removeRating(sessionService.getVoter(request.getToken()), request.getIdeaKey());
                 return EMPTY_JSON;
             } catch (ServerException ex) {
                 return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
@@ -289,7 +293,7 @@ public class Server {
         TakeIdeaDtoRequest request = gson.fromJson(requestJsonString, TakeIdeaDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
-                candidateService.addIdea(sessionService.getVoter(request.getToken()), ideaService.getIdea(request.getIdeaToken()));
+                candidateService.addIdea(sessionService.getVoter(request.getToken()), ideaService.getIdea(request.getIdeaKey()));
                 return EMPTY_JSON;
             } catch (ServerException ex) {
                 return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
@@ -303,7 +307,7 @@ public class Server {
 
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
-                candidateService.removeIdea(sessionService.getVoter(request.getToken()), ideaService.getIdea(request.getIdeaToken()));
+                candidateService.removeIdea(sessionService.getVoter(request.getToken()), ideaService.getIdea(request.getIdeaKey()));
                 return EMPTY_JSON;
             } catch (ServerException ex) {
                 return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
@@ -331,7 +335,7 @@ public class Server {
     public String getAllVotersIdeas(String requestJsonString) {
         GetAllVotersIdeasDtoRequest request = gson.fromJson(requestJsonString, GetAllVotersIdeasDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
-            ideaService.getAllVotersIdeas(request.getVoterLogins());
+            return gson.toJson(new GetAllVotersIdeasDtoResponse(ideaService.getAllVotersIdeas(request.getLogins())));
         }
         return gson.toJson(new ErrorDtoResponse(NULL_VALUE));
     }

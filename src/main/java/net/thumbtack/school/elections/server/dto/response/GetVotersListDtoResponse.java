@@ -2,10 +2,10 @@ package net.thumbtack.school.elections.server.dto.response;
 
 import java.util.Set;
 
-public class ShowVotersListDtoResponse {
+public class GetVotersListDtoResponse {
     private Set<String> voters;
 
-    public ShowVotersListDtoResponse(Set<String> voters) {
+    public GetVotersListDtoResponse(Set<String> voters) {
         setVoters(voters);
     }
 

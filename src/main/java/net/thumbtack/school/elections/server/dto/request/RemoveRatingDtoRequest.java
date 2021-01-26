@@ -2,19 +2,19 @@ package net.thumbtack.school.elections.server.dto.request;
 
 public class RemoveRatingDtoRequest {
     private String token;
-    private String ideaToken;
+    private String ideaKey;
 
-    public RemoveRatingDtoRequest(String token, String ideaToken) {
+    public RemoveRatingDtoRequest(String token, String ideaKey) {
         setToken(token);
-        setIdeaToken(ideaToken);
+        setIdeaKey(ideaKey);
     }
 
-    public String getIdeaToken() {
-        return ideaToken;
+    public String getIdeaKey() {
+        return ideaKey;
     }
 
-    public void setIdeaToken(String ideaToken) {
-        this.ideaToken = ideaToken;
+    public void setIdeaKey(String ideaKey) {
+        this.ideaKey = ideaKey;
     }
 
     public String getToken() {
@@ -26,6 +26,6 @@ public class RemoveRatingDtoRequest {
     }
 
     public boolean requiredFieldsIsNotNull() {
-        return token != null && ideaToken != null;
+        return token != null && ideaKey != null;
     }
 }

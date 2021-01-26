@@ -7,6 +7,7 @@ public class ServerException extends Exception {
     public ServerException(ExceptionErrorCode voterExceptionErrorCode) {
         this.voterExceptionErrorCode = voterExceptionErrorCode;
     }
+
     @Override
     public String getLocalizedMessage() {
         return voterExceptionErrorCode.getMessage();
