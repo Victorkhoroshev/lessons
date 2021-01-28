@@ -36,6 +36,6 @@ public class EstimateIdeaDtoRequest {
     }
 
     public boolean requiredFieldsIsNotNull() {
-        return token != null;
+        return ideaKey != null && token != null;
     }
 }

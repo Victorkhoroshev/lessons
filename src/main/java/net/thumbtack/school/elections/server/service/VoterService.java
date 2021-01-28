@@ -22,7 +22,7 @@ public class VoterService {
      */
     public String register(Voter voter) throws ServerException {
         dao.save(voter);
-        return sessionService.loginVoter(voter);
+        return sessionService.login(voter);
     }
 
     public Set<String> getAll() {
@@ -38,7 +38,7 @@ public class VoterService {
         if (!voter.getPassword().equals(password)) {
             throw new ServerException(ExceptionErrorCode.VOTER_WRONG_PASSWORD);
         }
-        return sessionService.loginVoter(voter);
+        return sessionService.login(voter);
     }
 
     public void logout(String token) throws ServerException {

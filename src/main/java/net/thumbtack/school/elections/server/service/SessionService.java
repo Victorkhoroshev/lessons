@@ -26,9 +26,10 @@ public class SessionService {
         throw new ServerException(ExceptionErrorCode.VOTER_LOGOUT);
     }
 
-    public String loginVoter(Voter voter) {
-        sessions.put(voter, new Session(UUID.randomUUID().toString()));
-        return sessions.get(voter).getToken();
+    public String login(Voter voter) {
+        String token = UUID.randomUUID().toString();
+        sessions.put(voter, new Session(token));
+        return token;
     }
 
     public void logout(String token) throws ServerException {

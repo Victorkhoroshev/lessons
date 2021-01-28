@@ -103,7 +103,7 @@ public class Server {
         }
         if (response.length() <  1){
             try {
-                return gson.toJson(new RegisterVoterDtoResponse(voterService.register(request.newVoter())));
+                return gson.toJson(new RegisterDtoResponse(voterService.register(request.newVoter())));
             } catch (ServerException ex) {
                 return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
             }
@@ -159,8 +159,8 @@ public class Server {
     }
 
     //запросить список всех избирателей
-    public String getVotersList(String requestJsonString) {
-        GetVotersListDtoRequest request = gson.fromJson(requestJsonString, GetVotersListDtoRequest.class);
+    public String getVoterList(String requestJsonString) {
+        GetVoterListDtoRequest request = gson.fromJson(requestJsonString, GetVoterListDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
                 sessionService.getVoter(request.getToken());
@@ -187,7 +187,7 @@ public class Server {
 // он должен предварительно снять свою кандидатуру.
     public String addCandidate(String requestJsonString) {
         AddCandidateDtoRequest request = gson.fromJson(requestJsonString, AddCandidateDtoRequest.class);
-        if (request != null && !request.requiredFieldsIsNotNull()) {
+        if (request != null && request.requiredFieldsIsNotNull()) {
             try {
                 if (!sessionService.getVoter(request.getToken()).isHasOwnCandidate()) {
                     candidateService.addCandidate(voterService.get(request.getCandidateLogin()));
@@ -221,7 +221,7 @@ public class Server {
     //кандидат хочет снять свою кандидатуру
     public String withdrawCandidacy(String requestJsonString) {
         WithdrawCandidacyRequest request = gson.fromJson(requestJsonString, WithdrawCandidacyRequest.class);
-        if (request != null && !request.requiredFieldsIsNotNull()) {
+        if (request != null && request.requiredFieldsIsNotNull()) {
             try {
                 candidateService.withdrawCandidacy(sessionService.getVoter(request.getToken()));
                 return EMPTY_JSON;
@@ -237,7 +237,9 @@ public class Server {
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
                 if (candidateService.isCandidate(sessionService.getVoter(request.getToken()))) {
-                    candidateService.addIdea(sessionService.getVoter(request.getToken()), ideaService.getIdea(request.getIdea()));
+                    ideaService.addIdea(sessionService.getVoter(request.getToken()), request.getIdea());
+                    candidateService.addIdea(sessionService.getVoter(request.getToken()), ideaService.getIdea(ideaService.getKey(sessionService.getVoter(request.getToken()),request.getIdea())));
+                    return EMPTY_JSON;
                 } else {
                     ideaService.addIdea(sessionService.getVoter(request.getToken()), request.getIdea());
                     return EMPTY_JSON;

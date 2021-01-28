@@ -38,7 +38,7 @@ public class TestSessionService {
     public void loginVoterTest() throws ServerException {
         Voter voter = new Voter(randomString(), randomString(), randomString(),1, randomString(),"12qW1233&");
         int i = SessionService.sessions.size();
-        assertEquals(sessionService.loginVoter(voter), sessionService.getSession(voter).getToken());
+        assertEquals(sessionService.login(voter), sessionService.getSession(voter).getToken());
         assertEquals(i + 1, SessionService.sessions.size());
     }
 

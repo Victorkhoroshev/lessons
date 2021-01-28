@@ -1,6 +1,5 @@
 package net.thumbtack.school.elections.server.dto.request;
 
-import net.thumbtack.school.elections.server.model.Idea;
 import java.util.List;
 
 public class ConfirmationCandidacyDtoRequest {
