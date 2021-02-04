@@ -20,7 +20,7 @@ public class TestContextDaoImpl {
     public void syncTest() throws IOException, ClassNotFoundException {
         server.startServer(null);
         assertAll(
-                () -> assertEquals(0, Database.getLogins().size()),
+                () -> assertEquals(3, Database.getLogins().size()),
                 () -> assertEquals(0, Database.getVoterSet().size()),
                 () -> assertEquals(0, Database.getCandidateSet().size())
         );

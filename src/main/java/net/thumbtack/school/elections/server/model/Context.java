@@ -1,6 +1,8 @@
 package net.thumbtack.school.elections.server.model;
 
 import net.thumbtack.school.elections.server.service.CandidateService;
+import net.thumbtack.school.elections.server.service.CommissionerService;
+import net.thumbtack.school.elections.server.service.ElectionService;
 import net.thumbtack.school.elections.server.service.IdeaService;
 import java.io.Serializable;
 import java.util.List;
@@ -13,12 +15,22 @@ public class Context implements Serializable {
     private List<String> logins;
     private CandidateService candidateService;
     private IdeaService ideaService;
+    private ElectionService electionService;
+    private Set<Commissioner> commissionerSet;
 
     public static Context getInstance()
     {
         if (context == null)
             context = new Context();
         return context;
+    }
+
+    public Set<Commissioner> getCommissionerSet() {
+        return commissionerSet;
+    }
+
+    public void setCommissionerSet(Set<Commissioner> commissionerSet) {
+        this.commissionerSet = commissionerSet;
     }
 
     public Set<Candidate> getCandidateSet() {
@@ -59,5 +71,13 @@ public class Context implements Serializable {
 
     public void setIdeaService(IdeaService ideaService) {
         this.ideaService = ideaService;
+    }
+
+    public ElectionService getElectionService() {
+        return electionService;
+    }
+
+    public void setElectionService(ElectionService electionService) {
+        this.electionService = electionService;
     }
 }

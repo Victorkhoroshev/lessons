@@ -45,7 +45,7 @@ public class TestContextService {
         assertAll(
                 () -> assertEquals(0, contextService2.getContext().getCandidateSet().size()),
                 () -> assertEquals(0, contextService2.getContext().getCandidateSet().size()),
-                () -> assertEquals(0, contextService2.getContext().getLogins().size())
+                () -> assertEquals(3, contextService2.getContext().getLogins().size())
         );
         server.stopServer(null);
     }

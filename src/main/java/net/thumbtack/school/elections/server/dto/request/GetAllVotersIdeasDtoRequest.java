@@ -28,6 +28,6 @@ public class GetAllVotersIdeasDtoRequest {
     }
 
     public boolean requiredFieldsIsNotNull(){
-        return token != null && logins.isEmpty();
+        return token != null && logins != null;
     }
 }

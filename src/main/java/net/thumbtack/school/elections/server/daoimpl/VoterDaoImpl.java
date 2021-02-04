@@ -17,7 +17,7 @@ public class VoterDaoImpl implements VoterDao<Voter> {
                 return voter;
             }
         }
-        throw new ServerException(ExceptionErrorCode.VOTER_NOT_FOUND);
+        throw new ServerException(ExceptionErrorCode.NOT_FOUND);
     }
 
     @Override
@@ -28,11 +28,11 @@ public class VoterDaoImpl implements VoterDao<Voter> {
     @Override
     public void save(Voter voter) throws ServerException {
         if (Database.getVoterSet().contains(voter)){
-            throw new ServerException(ExceptionErrorCode.VOTER_ALREADY_EXISTS);
+            throw new ServerException(ExceptionErrorCode.ALREADY_EXISTS);
         }
         for (String s : Database.getLogins()) {
             if (voter.getLogin().equals(s)) {
-                throw new ServerException(ExceptionErrorCode.VOTER_LOGIN_ALREADY_EXISTS);
+                throw new ServerException(ExceptionErrorCode.LOGIN_ALREADY_EXISTS);
             }
         }
         Database.getVoterSet().add(voter);

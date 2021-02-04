@@ -2,7 +2,6 @@ package net.thumbtack.school.elections.server.service;
 import net.thumbtack.school.elections.server.Server;
 import net.thumbtack.school.elections.server.model.Voter;
 import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Random;
@@ -38,7 +37,7 @@ public class TestVoterService {
             sessionService.getSession(voter1);
             fail();
         } catch (ServerException ex) {
-            assertEquals(ExceptionErrorCode.VOTER_LOGOUT, ex.getErrorCode());
+            assertEquals(ExceptionErrorCode.LOGOUT, ex.getErrorCode());
         }
         server.stopServer(null);
     }
@@ -52,7 +51,7 @@ public class TestVoterService {
         try {
             voterService.login(voter1.getLogin(), voter1.getPassword() + "12");
         } catch (ServerException ex) {
-            assertEquals(ExceptionErrorCode.VOTER_WRONG_PASSWORD, ex.getErrorCode());
+            assertEquals(ExceptionErrorCode.WRONG_PASSWORD, ex.getErrorCode());
         }
         server.stopServer(null);
     }
@@ -74,7 +73,7 @@ public class TestVoterService {
     @Test
     public void getVoterTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
-        Voter voter = new Voter("имя", "фамилия", "улица", 1, "login","qwe");
+        Voter voter = new Voter("имя", "фамилия","отчество", "улица", 1, "login","qwe");
         voterService.register(voter);
         assertEquals(voter, voterService.get("login"));
         server.stopServer(null);

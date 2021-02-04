@@ -215,6 +215,19 @@ public class TestIdeaService {
         }
         server.stopServer(null);
     }
+    @Test
+    public void equalsTest() {
+        IdeaService service2 = service;
+        assertTrue(service2.equals(service) && service.equals(service2));
+        assertFalse(service2.equals(null));
+        assertFalse(service2.equals(getNewVoter()));
+    }
+
+    @Test
+    public void hashCodeTest() {
+        IdeaService service2 = service;
+        assertTrue(service2.hashCode() == service.hashCode());
+    }
 
     private Voter getNewVoter() {
         Random random = new Random();

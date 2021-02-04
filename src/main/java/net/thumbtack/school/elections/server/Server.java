@@ -16,13 +16,15 @@ public class Server {
     //модификаторы для тестов - package
     private static final String EMPTY_JSON = "";
     private static final String NULL_VALUE = "Некорректный запрос";
+    private static final String ELECTION_START = "Выборы уже проходят, действие невозможно.";
     Gson gson;
     ContextService contextService;
     SessionService sessionService;
     IdeaService ideaService;
     CandidateService candidateService;
     VoterService voterService;
-
+    CommissionerService commissionerService;
+    ElectionService electionService;
     // Производит всю необходимую инициализацию и запускает сервер.
 //savedDataFileName - имя файла, в котором было сохранено состояние сервера.
 // Если savedDataFileName == null, восстановление состояния не производится, сервер стартует “с нуля”.
@@ -36,11 +38,15 @@ public class Server {
                 Context context = (Context) objectInputStream.readObject();
                 ideaService = context.getIdeaService();
                 candidateService = context.getCandidateService();
+                electionService = context.getElectionService();
+                commissionerService = new CommissionerService(sessionService, electionService);
                 contextService = new ContextService(context);
             }
         } else {
             ideaService = new IdeaService();
             candidateService = new CandidateService();
+            electionService = new ElectionService();
+            commissionerService = new CommissionerService(sessionService, electionService);
             contextService = new ContextService();
         }
     }
@@ -57,12 +63,15 @@ public class Server {
                 contextService.sync();
                 context.setCandidateService(candidateService);
                 context.setIdeaService(ideaService);
+                context.setElectionService(electionService);
                 objectOutputStream.writeObject(context);
             }
         }
         ideaService = null;
         candidateService = null;
         contextService = null;
+        electionService = null;
+        commissionerService = null;
     }
 
 //Регистрирует избирателя на сервере. requestJsonString содержит данные об избирателе , необходимые для регистрации.
@@ -72,9 +81,11 @@ public class Server {
     public String register(String requestJsonString) {
         String response = "";
         RegisterDtoRequest request = gson.fromJson(requestJsonString, RegisterDtoRequest.class);
+        if (electionService.isElectionStart().equals(true)) {
+            return gson.toJson(new ErrorDtoResponse(ELECTION_START));
+        }
         if (requestJsonString == null || !request.requiredFieldsIsNotNull()) {
-            response += "Пожалуйста, заполните все данные.";
-            return gson.toJson(new ErrorDtoResponse(response));
+            return gson.toJson(new ErrorDtoResponse("Пожалуйста, заполните все данные."));
         }
         if (!request.isFirstNameValid()) {
             response += "Имя должно быть на кириллице, без пробелов, спец. символов и цифр.\n";
@@ -127,6 +138,9 @@ public class Server {
         }
         if (response.length() < 1) {
             try {
+                if (commissionerService.getLogins().contains(request.getLogin())) {
+                    return gson.toJson(new LoginDtoResponse(commissionerService.login(request.getLogin(), request.getPassword())));
+                }
                 return gson.toJson(new LoginDtoResponse(voterService.login(request.getLogin(),
                         request.getPassword())));
             } catch (ServerException ex) {
@@ -144,7 +158,10 @@ public class Server {
             return gson.toJson(new ErrorDtoResponse(NULL_VALUE));
         }
         try {
-            if (candidateService.isCandidate(sessionService.getVoter(request.getToken()))) {
+            if (commissionerService.isCommissioner(request.getToken())){
+                commissionerService.logout(request.getToken());
+            }
+            else if (candidateService.isCandidate(sessionService.getVoter(request.getToken()))) {
                 return gson.toJson(new ErrorDtoResponse("Невозможно разлогиниться, для начала," +
                         " снимите свою кандидатуру с выборов."));
             } else {
@@ -162,12 +179,10 @@ public class Server {
     public String getVoterList(String requestJsonString) {
         GetVoterListDtoRequest request = gson.fromJson(requestJsonString, GetVoterListDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
-            try {
-                sessionService.getVoter(request.getToken());
-                return gson.toJson(new GetVotersListDtoResponse(voterService.getAll()));
-            } catch (ServerException ex) {
-                return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
+            if (!sessionService.isLogin(request.getToken())) {
+                return gson.toJson(new ErrorDtoResponse(ExceptionErrorCode.LOGOUT.getMessage()));
             }
+            return gson.toJson(new GetVotersListDtoResponse(voterService.getAll()));
         }
         return gson.toJson(new ErrorDtoResponse(NULL_VALUE));
     }
@@ -186,6 +201,9 @@ public class Server {
 // Если кандидат в мэры, давший свое согласие на участие в выборах, хочет покинуть сервер,
 // он должен предварительно снять свою кандидатуру.
     public String addCandidate(String requestJsonString) {
+        if (electionService.isElectionStart().equals(true)) {
+            return gson.toJson(new ErrorDtoResponse(ELECTION_START));
+        }
         AddCandidateDtoRequest request = gson.fromJson(requestJsonString, AddCandidateDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
@@ -202,6 +220,9 @@ public class Server {
     }
 //request содержит токен кандидата и его идеи
     public String confirmationCandidacy(String requestJsonString) {
+        if (electionService.isElectionStart().equals(true)) {
+            return gson.toJson(new ErrorDtoResponse(ELECTION_START));
+        }
         ConfirmationCandidacyDtoRequest request = gson.fromJson(requestJsonString,
                 ConfirmationCandidacyDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
@@ -220,6 +241,9 @@ public class Server {
 
     //кандидат хочет снять свою кандидатуру
     public String withdrawCandidacy(String requestJsonString) {
+        if (electionService.isElectionStart().equals(true)) {
+            return gson.toJson(new ErrorDtoResponse(ELECTION_START));
+        }
         WithdrawCandidacyRequest request = gson.fromJson(requestJsonString, WithdrawCandidacyRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
@@ -233,6 +257,9 @@ public class Server {
     }
     //высказать своё предложение
     public String addIdea(String requestJsonString) {
+        if (electionService.isElectionStart().equals(true)) {
+            return gson.toJson(new ErrorDtoResponse(ELECTION_START));
+        }
         AddIdeaDtoRequest request = gson.fromJson(requestJsonString, AddIdeaDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
@@ -252,6 +279,9 @@ public class Server {
     }
     // поставить оценку предложению
     public String estimateIdea(String requestJsonString) {
+        if (electionService.isElectionStart().equals(true)) {
+            return gson.toJson(new ErrorDtoResponse(ELECTION_START));
+        }
         EstimateIdeaDtoRequest request = gson.fromJson(requestJsonString, EstimateIdeaDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
@@ -266,6 +296,9 @@ public class Server {
     //изменить свою оценку
     //содержит свой токен, токен предложения и новый рейтинг
     public String changeRating(String requestJsonString) {
+        if (electionService.isElectionStart().equals(true)) {
+            return gson.toJson(new ErrorDtoResponse(ELECTION_START));
+        }
         ChangeRatingDtoRequest request = gson.fromJson(requestJsonString, ChangeRatingDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
@@ -279,6 +312,9 @@ public class Server {
     }
     //удалить свою оценку
     public String removeRating(String requestJsonString) {
+        if (electionService.isElectionStart().equals(true)) {
+            return gson.toJson(new ErrorDtoResponse(ELECTION_START));
+        }
         RemoveRatingDtoRequest request = gson.fromJson(requestJsonString, RemoveRatingDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
@@ -292,6 +328,9 @@ public class Server {
     }
     //кандидат добавляет себе новые идеи ругих пользователей
     public String takeIdea(String requestJsonString) {
+        if (electionService.isElectionStart().equals(true)) {
+            return gson.toJson(new ErrorDtoResponse(ELECTION_START));
+        }
         TakeIdeaDtoRequest request = gson.fromJson(requestJsonString, TakeIdeaDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
@@ -305,8 +344,10 @@ public class Server {
     }
     //кандидат удаляет предложения
     public String removeIdea(String requestJsonString) {
+        if (electionService.isElectionStart().equals(true)) {
+            return gson.toJson(new ErrorDtoResponse(ELECTION_START));
+        }
         RemoveIdeaDtoRequest request = gson.fromJson(requestJsonString, RemoveIdeaDtoRequest.class);
-
         if (request != null && request.requiredFieldsIsNotNull()) {
             try {
                 candidateService.removeIdea(sessionService.getVoter(request.getToken()), ideaService.getIdea(request.getIdeaKey()));
@@ -321,6 +362,9 @@ public class Server {
     public String getCandidateMap(String requestJsonString) {
         GetCandidateMapDtoRequest request = gson.fromJson(requestJsonString, GetCandidateMapDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
+            if (!sessionService.isLogin(request.getToken())) {
+                return gson.toJson(new ErrorDtoResponse(ExceptionErrorCode.LOGOUT.getMessage()));
+            }
             return gson.toJson(new GetCandidateMapDtoResponse(candidateService.getCandidateMap()));
         }
         return gson.toJson(new ErrorDtoResponse(NULL_VALUE));
@@ -329,6 +373,9 @@ public class Server {
     public String getAllIdeas(String requestJsonString) {
         GetAllIdeasDtoRequest request = gson.fromJson(requestJsonString, GetAllIdeasDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
+            if (!sessionService.isLogin(request.getToken())) {
+                return gson.toJson(new ErrorDtoResponse(ExceptionErrorCode.LOGOUT.getMessage()));
+            }
             return gson.toJson(new GetAllIdeasDtoResponse(ideaService.getIdeas()));
         }
         return gson.toJson(new ErrorDtoResponse(NULL_VALUE));// можно и просто пустой конструктор, который нул велью возвращает
@@ -337,7 +384,54 @@ public class Server {
     public String getAllVotersIdeas(String requestJsonString) {
         GetAllVotersIdeasDtoRequest request = gson.fromJson(requestJsonString, GetAllVotersIdeasDtoRequest.class);
         if (request != null && request.requiredFieldsIsNotNull()) {
+            if (!sessionService.isLogin(request.getToken())) {
+                return gson.toJson(new ErrorDtoResponse(ExceptionErrorCode.LOGOUT.getMessage()));
+            }
             return gson.toJson(new GetAllVotersIdeasDtoResponse(ideaService.getAllVotersIdeas(request.getLogins())));
+        }
+        return gson.toJson(new ErrorDtoResponse(NULL_VALUE));
+    }
+    //объявляется голосование
+    public String startElection(String requestJsonString) {
+        StartElectionDtoRequest request = gson.fromJson(requestJsonString, StartElectionDtoRequest.class);
+        if (request != null && request.requiredFieldsIsNotNull()) {
+            try {
+                commissionerService.startElection(request.getToken(), candidateService.getCandidateSet());
+                return EMPTY_JSON;
+            } catch (ServerException ex) {
+                return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
+            }
+        }
+        return gson.toJson(new ErrorDtoResponse(NULL_VALUE));
+    }
+    //проголосовать
+    public String vote(String requestJsonStrong) {
+        if (electionService.isElectionStart().equals(false)) {
+            return gson.toJson(new ErrorDtoResponse("Голосование не началось."));
+        }
+        if (electionService.isElectionStop().equals(true)) {
+            return gson.toJson(new ErrorDtoResponse("Голосование закончилось."));
+        }
+            VoteDtoRequest request = gson.fromJson(requestJsonStrong, VoteDtoRequest.class);
+            if (request != null && request.requiredFieldsIsNotNull()) {
+                try {
+                    electionService.vote(sessionService.getVoter(request.getToken()), candidateService.getCandidate(request.getCandidateLogin()));
+                    return EMPTY_JSON;
+                } catch (ServerException ex) {
+                    return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
+                }
+            }
+            return gson.toJson(new ErrorDtoResponse(NULL_VALUE));
+    }
+    //остановить голосование и получить результаты
+    public String getElectionResult(String requestJsonString) {
+        GetElectionResultDtoRequest request = gson.fromJson(requestJsonString, GetElectionResultDtoRequest.class);
+        if (request != null && request.requiredFieldsIsNotNull()) {
+            try {
+                return gson.toJson(new GetElectionResultDtoResponse(commissionerService.getElectionResult(request.getToken())));
+            } catch (ServerException ex) {
+                return gson.toJson(new ErrorDtoResponse(ex.getLocalizedMessage()));
+            }
         }
         return gson.toJson(new ErrorDtoResponse(NULL_VALUE));
     }

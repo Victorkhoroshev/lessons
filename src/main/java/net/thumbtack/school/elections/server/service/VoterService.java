@@ -36,13 +36,13 @@ public class VoterService {
     public String login(String login, String password) throws ServerException {
         Voter voter = dao.get(login);
         if (!voter.getPassword().equals(password)) {
-            throw new ServerException(ExceptionErrorCode.VOTER_WRONG_PASSWORD);
+            throw new ServerException(ExceptionErrorCode.WRONG_PASSWORD);
         }
         return sessionService.login(voter);
     }
 
     public void logout(String token) throws ServerException {
-        sessionService.logout(token);
+        sessionService.logoutVoter(token);
     }
 
     public Voter get(String login) throws ServerException {

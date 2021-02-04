@@ -7,10 +7,7 @@ import net.thumbtack.school.elections.server.model.Idea;
 import net.thumbtack.school.elections.server.model.Voter;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class CandidateService implements Serializable {
     private final transient CandidateDao<Candidate> dao;
@@ -57,6 +54,20 @@ public class CandidateService implements Serializable {
     }
     public Map<Candidate, List<Idea>> getCandidateMap() {
         return ideas;
+    }
+    public Set<Candidate> getCandidateSet() {
+        return ideas.keySet();
+    }
+    public Candidate getCandidate(String login) throws ServerException {
+        if (login != null) {
+            for (Candidate candidate : ideas.keySet()) {
+                if (candidate.getVoter().getLogin().equals(login)) {
+                    return candidate;
+                }
+            }
+            throw new ServerException(ExceptionErrorCode.CANDIDATE_NOT_FOUND);
+        }
+        return null;
     }
 
     @Override
