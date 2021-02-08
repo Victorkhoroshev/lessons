@@ -17,7 +17,8 @@ public class TestContextService {
     @Test
     public void syncTest() throws IOException, ClassNotFoundException {
         server.startServer(null);
-        Context context = new Context();
+        ContextService contextService = new ContextService();
+        Context context = contextService.getContext();
         List<String> logins = new ArrayList<>();
         Set<Voter> voterSet = new HashSet<>();
         Set<Candidate> candidateSet = new HashSet<>();
@@ -26,19 +27,19 @@ public class TestContextService {
                 "Пригородная", 21, 188, "victor@khoroshev.net"," 1111");
         voterSet.add(voter);
         candidateSet.add(new Candidate(voter));
-        context.setCandidateService(new CandidateService());
-        context.setIdeaService(new IdeaService());
+        context.setCandidateService(new CandidateService(contextService));
+        context.setIdeaService(new IdeaService(contextService));
         context.setLogins(logins);
         context.setVoterSet(voterSet);
         context.setCandidateSet(candidateSet);
-        ContextService contextService = new ContextService(context);
+        ContextService contextService1 = new ContextService(context);
         contextService.sync();
         assertAll(
-                () -> assertEquals(0, contextService.getContext().getCandidateService().getCandidateMap().size()),
-                () -> assertEquals(0, contextService.getContext().getIdeaService().getIdeas().size()),
-                () -> assertEquals(1, contextService.getContext().getCandidateSet().size()),
-                () -> assertEquals(1, contextService.getContext().getCandidateSet().size()),
-                () -> assertEquals(1, contextService.getContext().getLogins().size())
+                () -> assertEquals(0, contextService1.getContext().getCandidateService().getCandidateMap().size()),
+                () -> assertEquals(0, contextService1.getContext().getIdeaService().getIdeas().size()),
+                () -> assertEquals(1, contextService1.getContext().getCandidateSet().size()),
+                () -> assertEquals(1, contextService1.getContext().getCandidateSet().size()),
+                () -> assertEquals(1, contextService1.getContext().getLogins().size())
         );
         ContextService contextService2 = new ContextService();
         contextService2.sync();

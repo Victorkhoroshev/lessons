@@ -8,6 +8,13 @@ import net.thumbtack.school.elections.server.service.ExceptionErrorCode;
 import java.util.*;
 
 public class VoterDaoImpl implements VoterDao<Voter> {
+
+    /**
+     * Get voter by his login from database.
+     * @param login the login voter, who already logged out from the server.
+     * @return The voter who owns this login.
+     * @throws ServerException if login not found in database voter set.
+     */
     @Override
     public Voter get(String login) throws ServerException {
         Voter voter;
@@ -20,11 +27,20 @@ public class VoterDaoImpl implements VoterDao<Voter> {
         throw new ServerException(ExceptionErrorCode.NOT_FOUND);
     }
 
+    /**
+     * Get all voters from database.
+     * @return Voter's set, who already register.
+     */
     @Override
     public Set<Voter> getAll() {
         return Database.getVoterSet();
     }
 
+    /**
+     * Put voter and his login in database.
+     * @param voter new voter for database.
+     * @throws ServerException if voter already contain in database or his login already exists.
+     */
     @Override
     public void save(Voter voter) throws ServerException {
         if (Database.getVoterSet().contains(voter)){

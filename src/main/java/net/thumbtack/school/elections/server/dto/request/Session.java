@@ -1,6 +1,5 @@
 package net.thumbtack.school.elections.server.dto.request;
 
-
 public class Session {
     private String token;
 

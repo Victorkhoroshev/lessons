@@ -1,20 +1,14 @@
 package net.thumbtack.school.elections.server.model;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.io.Serializable;
 import java.util.Objects;
 
 public class Commissioner implements Serializable {
-    private final String firstName;
-    private final String lastName;
     private final String login;
     private final String password;
     private final boolean isChairman;
 
-    public Commissioner(String firstName, String lastName, String login, String password, boolean isChairman) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Commissioner(String login, String password, boolean isChairman) {
         this.login = login;
         this.password = password;
         this.isChairman = isChairman;
@@ -37,11 +31,11 @@ public class Commissioner implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Commissioner that = (Commissioner) o;
-        return isChairman == that.isChairman && firstName.equals(that.firstName) && lastName.equals(that.lastName) && login.equals(that.login) && password.equals(that.password);
+        return login.equals(that.login);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, login, password, isChairman);
+        return Objects.hash(login);
     }
 }

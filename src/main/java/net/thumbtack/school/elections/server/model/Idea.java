@@ -2,7 +2,6 @@ package net.thumbtack.school.elections.server.model;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

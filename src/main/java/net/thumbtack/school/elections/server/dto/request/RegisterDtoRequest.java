@@ -61,6 +61,10 @@ public class RegisterDtoRequest {
     }
 
     public boolean isPasswordValid() {
+        return passwordValidation(password);
+    }
+
+    static boolean passwordValidation(String password) {
         Pattern[] patterns = new Pattern[] {Pattern.compile("^(?=.*[a-zа-я]).+$"),
                 Pattern.compile("^(?=.*[A-ZА-Я]).+$"),
                 Pattern.compile(".*\\d.*"), Pattern.compile(".*\\W.*")};

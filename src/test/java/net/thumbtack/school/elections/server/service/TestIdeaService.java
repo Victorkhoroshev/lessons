@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestIdeaService {
     private final Server server = new Server();
-    private final IdeaService service = new IdeaService();
+    private final ContextService contextService = new ContextService();
+    private final IdeaService service = new IdeaService(contextService);
 
     @Test
     public void getIdeasTest() throws IOException, ClassNotFoundException, ServerException {
@@ -57,7 +58,7 @@ public class TestIdeaService {
     }
 
     @Test
-    public void addIdeaTest() throws IOException, ClassNotFoundException {
+    public void addIdeaTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
         Voter voter = getNewVoter();
         service.addIdea(voter, randomString());
@@ -66,7 +67,7 @@ public class TestIdeaService {
     }
 
     @Test
-    public void setIdeaCommunityTest() throws IOException, ClassNotFoundException {
+    public void setIdeaCommunityTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
         Voter voter = getNewVoter();
         Voter voter2 = getNewVoter();
@@ -87,6 +88,7 @@ public class TestIdeaService {
         assertEquals(0, service.getAllVotersIdeas(voterList3).size());
         server.stopServer(null);
     }
+
     @Test
     public void estimateTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
@@ -108,6 +110,7 @@ public class TestIdeaService {
         }
         server.stopServer(null);
     }
+
     @Test
     public void changeRatingTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
@@ -136,6 +139,7 @@ public class TestIdeaService {
         assertEquals(3f, service.getIdea(service.getKey(null, "1")).getRating());
         server.stopServer(null);
     }
+
     @Test
     public void removeRatingTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
@@ -171,8 +175,9 @@ public class TestIdeaService {
         assertEquals(3f, service.getIdea(service.getKey(voter, "1")).getRating());
         server.stopServer(null);
     }
+
     @Test
-    public void getIdeaTest() throws IOException, ClassNotFoundException {
+    public void getIdeaTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
         Voter voter = getNewVoter();
         service.addIdea(voter, randomString());
@@ -184,8 +189,9 @@ public class TestIdeaService {
         }
         server.stopServer(null);
     }
+
     @Test
-    public void getAllVotersIdeasTest() throws IOException, ClassNotFoundException {
+    public void getAllVotersIdeasTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
         Voter voter = getNewVoter();
         Voter voter2 = getNewVoter();
@@ -200,8 +206,9 @@ public class TestIdeaService {
         assertEquals(2, service.getAllVotersIdeas(logins).size());
         server.stopServer(null);
     }
+
     @Test
-    public void getKeyTest() throws IOException, ClassNotFoundException {
+    public void getKeyTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
         Voter voter = getNewVoter();
         Voter voter1 = getNewVoter();
@@ -215,6 +222,7 @@ public class TestIdeaService {
         }
         server.stopServer(null);
     }
+
     @Test
     public void equalsTest() {
         IdeaService service2 = service;

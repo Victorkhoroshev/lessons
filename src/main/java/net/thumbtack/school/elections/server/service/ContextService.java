@@ -10,6 +10,8 @@ public class ContextService {
 
     public ContextService() {
         context = Context.getInstance();
+        context.setElectionStart(false);
+        context.setElectionStop(false);
         contextDao = new ContextDaoImpl();
     }
 
@@ -25,4 +27,21 @@ public class ContextService {
     public Context getContext() {
         return context;
     }
+
+    public boolean isElectionStart() {
+        return context.getElectionStart();
+    }
+
+    public boolean isElectionStop() {
+        return context.getElectionStop();
+    }
+
+    public void setIsElectionStart(boolean isElectionStart) {
+        context.setElectionStart(isElectionStart);
+    }
+
+    public void setIsElectionStop(boolean isElectionStop) {
+        context.setElectionStop(isElectionStop);
+    }
+
 }

@@ -13,9 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestElectionService {
     private final Server server = new Server();
-    private final ElectionService electionService = new ElectionService();
+    private final ContextService contextService = new ContextService();
+    private final ElectionService electionService = new ElectionService(contextService);
+
     @Test
-    public void voteTest() throws IOException, ClassNotFoundException {
+    public void voteTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
         Voter voter = getNewVoter();
         Candidate candidate = new Candidate(voter);
@@ -37,8 +39,9 @@ public class TestElectionService {
         assertEquals(1, electionService.getVsEveryone().size());
         server.stopServer(null);
     }
+
     @Test
-    public void getElectionResultTest() throws IOException, ClassNotFoundException {
+    public void getElectionResultTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
         Voter voter1 = getNewVoter();
         Voter voter2 = getNewVoter();
@@ -81,7 +84,7 @@ public class TestElectionService {
         electionService.vote(voter3, null);
         electionService.vote(voter4, null);
         assertTrue(electionService.getElectionResult().contains(null));
-        assertTrue(electionService.isElectionStop());
+        assertTrue(contextService.isElectionStop());
         server.stopServer(null);
     }
 

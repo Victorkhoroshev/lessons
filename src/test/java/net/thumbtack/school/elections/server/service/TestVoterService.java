@@ -11,8 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestVoterService {
     private final Server server = new Server();
+    private final ContextService contextService = new ContextService();
     private final SessionService sessionService = new SessionService();
-    private final VoterService voterService = new VoterService(sessionService);
+    private final VoterService voterService = new VoterService(sessionService, contextService);
 
     @Test
     public void registerVoterTest() throws ServerException, IOException, ClassNotFoundException {
@@ -47,7 +48,8 @@ public class TestVoterService {
         server.startServer(null);
         Voter voter1 = getNewVoter();
         voterService.register(voter1);
-        assertEquals(voterService.login(voter1.getLogin(), voter1.getPassword()), sessionService.getSession(voter1).getToken());
+        assertEquals(voterService.login(voter1.getLogin(), voter1.getPassword()),
+                sessionService.getSession(voter1).getToken());
         try {
             voterService.login(voter1.getLogin(), voter1.getPassword() + "12");
         } catch (ServerException ex) {
@@ -61,9 +63,9 @@ public class TestVoterService {
         server.startServer(null);
         Voter voter = getNewVoter();
         Voter voter2 = getNewVoter();
-        Set<String> set = new HashSet<>();
-        set.add(voter.getLastName() + " " + voter.getFirstName());
-        set.add(voter2.getLastName() + " " + voter2.getFirstName());
+        Set<Voter> set = new HashSet<>();
+        set.add(voter);
+        set.add(voter2);
         voterService.register(voter);
         voterService.register(voter2);
         assertEquals(set, voterService.getAll());

@@ -9,7 +9,10 @@ public enum ExceptionErrorCode {
     WRONG_PASSWORD("Неверный пароль."),
     NOT_CHAIRMAN("Вы не председатель коммиссии."),
     CANDIDATE_NOT_FOUND("Кандидат не найден."),
-    IDEA_NOT_FOUND("Идея не найдена.");
+    IDEA_NOT_FOUND("Идея не найдена."),
+    ELECTION_START("Выборы уже проходят, действие невозможно."),
+    ELECTION_NOT_START("Голосование не началось."),
+    ELECTION_STOP("Голосование закончилось.");
 
     private final String message;
 

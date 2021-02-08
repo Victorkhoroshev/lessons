@@ -2,7 +2,7 @@ package net.thumbtack.school.elections.server.dto.request;
 
 public class VoteDtoRequest {
     private String token;
-    private String candidateLogin;
+    private final String candidateLogin;
 
     public VoteDtoRequest(String token, String candidateLogin) {
         this.token = token;
@@ -19,10 +19,6 @@ public class VoteDtoRequest {
 
     public String getCandidateLogin() {
         return candidateLogin;
-    }
-
-    public void setCandidateLogin(String candidateLogin) {
-        this.candidateLogin = candidateLogin;
     }
 
     public boolean requiredFieldsIsNotNull() {

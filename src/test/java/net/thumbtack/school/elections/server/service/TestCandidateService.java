@@ -1,7 +1,6 @@
 package net.thumbtack.school.elections.server.service;
 import net.thumbtack.school.elections.server.Server;
 import net.thumbtack.school.elections.server.database.Database;
-import net.thumbtack.school.elections.server.dto.request.RegisterDtoRequest;
 import net.thumbtack.school.elections.server.model.Candidate;
 import net.thumbtack.school.elections.server.model.Idea;
 import net.thumbtack.school.elections.server.model.Voter;
@@ -13,37 +12,60 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCandidateService {
     private final Server server = new Server();
-    private final CandidateService candidateService = new CandidateService();
+    private final ContextService contextService = new ContextService();
+    private final CandidateService candidateService = new CandidateService(contextService);
+
     @Test
-    public void addCandidateTest() throws IOException, ClassNotFoundException {
+    public void addCandidateTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
-        Voter voter = getNewVoter();
-        candidateService.addCandidate(voter);
-        candidateService.addCandidate(voter);
+        Voter voter1 = getNewVoter();
+        Voter voter2 = getNewVoter();
+        Voter voter3 = getNewVoter();
+        Voter voter4 = getNewVoter();
+        voter3.setHasOwnCandidate(true);
+        candidateService.addCandidate(voter1, voter2);
+        candidateService.addCandidate(voter1, voter2);
+        candidateService.addCandidate(voter4, voter2);
+        candidateService.addCandidate(voter3, voter1);;
         assertAll(
                 () -> assertEquals(1, Database.getCandidateSet().size())
         );
         server.stopServer(null);
     }
+
     @Test
     public void confirmationCandidacyTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
         Voter voter = getNewVoter();
+        Voter voter2 = getNewVoter();
+        Voter voter3 = getNewVoter();
+        Voter voter4 = getNewVoter();
+        candidateService.addCandidate(voter3, voter2);
         List<Idea> ideas = new ArrayList<>();
         ideas.add(new Idea("1", voter,randomString()));
         ideas.add(new Idea("2", voter, randomString()));
         candidateService.confirmationCandidacy(voter, ideas);
-        assertTrue(candidateService.getCandidateMap().containsValue(ideas));
-        assertTrue(Database.getCandidateSet().contains(new Candidate(voter)));
-        Voter voter2 = getNewVoter();
-        candidateService.addCandidate(voter);
         List<Idea> ideas2 = new ArrayList<>();
         ideas2.add(new Idea("1", voter2,randomString()));
         ideas2.add(new Idea("2", voter2,randomString()));
         candidateService.confirmationCandidacy(voter2, ideas2);
-        assertTrue(candidateService.getCandidateMap().containsValue(ideas2));
+        candidateService.confirmationCandidacy(voter3, new ArrayList<>());
+        assertAll(
+                () -> assertTrue(candidateService.getCandidateMap().containsValue(ideas)),
+                () -> assertTrue(Database.getCandidateSet().contains(new Candidate(voter))),
+                () -> assertTrue(candidateService.getCandidateMap().containsKey(new Candidate(voter2))),
+                () -> assertFalse(candidateService.getCandidateMap().containsKey(new Candidate(voter3)))
+        );
+        contextService.setIsElectionStart(true);
+        try {
+            candidateService.confirmationCandidacy(voter4, new ArrayList<>());
+            fail();
+        } catch (ServerException ex) {
+            assertEquals(ExceptionErrorCode.ELECTION_START, ex.getErrorCode());
+        }
         server.stopServer(null);
     }
+
     @Test
     public void withdrawCandidacyTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
@@ -57,6 +79,7 @@ public class TestCandidateService {
         assertEquals(0, Database.getCandidateSet().size());
         server.stopServer(null);
     }
+
     @Test
     public void isCandidateTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
@@ -86,6 +109,7 @@ public class TestCandidateService {
         );
         server.stopServer(null);
     }
+
     @Test
     public void removeIdeaTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
@@ -104,6 +128,7 @@ public class TestCandidateService {
         assertEquals(2, candidateService.getCandidateMap().get(new Candidate(voter)).size());
         server.stopServer(null);
     }
+
     @Test
     public void getCandidateSetTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);
@@ -117,6 +142,7 @@ public class TestCandidateService {
         assertEquals(candidateService.getCandidateSet(), candidateSet);
         server.stopServer(null);
     }
+
     @Test
     public void getCandidateTest() throws IOException, ClassNotFoundException, ServerException {
         server.startServer(null);

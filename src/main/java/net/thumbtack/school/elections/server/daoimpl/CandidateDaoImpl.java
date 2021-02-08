@@ -8,6 +8,12 @@ import net.thumbtack.school.elections.server.service.ServerException;
 
 public class CandidateDaoImpl implements CandidateDao<Candidate> {
 
+    /**
+     * Get candidate by his login from database.
+     * @param login the login candidate, who already logged out from the server.
+     * @return The candidate who owns this login.
+     * @throws ServerException if login not found in database's candidate's set.
+     */
     @Override
     public Candidate get(String login) throws ServerException {
         Candidate candidate;
@@ -20,11 +26,21 @@ public class CandidateDaoImpl implements CandidateDao<Candidate> {
         throw new ServerException(ExceptionErrorCode.CANDIDATE_NOT_FOUND);
     }
 
+    /**
+     * Save candidate in database.
+     * @param candidate new candidate for election.
+     */
     @Override
     public void save(Candidate candidate) {
         Database.getCandidateSet().add(candidate);
     }
 
+    /**
+     * Checks: does database store candidate with this login.
+     * @param login the login candidate, who already logged out from the server.
+     * @return If database contain candidate with this login: true.
+     * If database not contain candidate with this login: false.
+     */
     @Override
     public boolean contains(String login) {
         for (Candidate candidate : Database.getCandidateSet()) {
@@ -35,6 +51,10 @@ public class CandidateDaoImpl implements CandidateDao<Candidate> {
         return false;
     }
 
+    /**
+     * Delete candidate from database.
+     * @param candidate candidate for remove from database.
+     */
     @Override
     public void delete(Candidate candidate) {
         Database.getCandidateSet().remove(candidate);

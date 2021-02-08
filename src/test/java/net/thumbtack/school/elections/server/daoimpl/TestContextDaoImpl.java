@@ -58,14 +58,4 @@ public class TestContextDaoImpl {
         );
         server.stopServer(null);
     }
-
-        private String randomString() {
-        Random random = new Random();
-        char[] sAlphabet = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзиклмнопрстуфхцчшщъыьэюя".toCharArray();
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < 60; i++) {
-            stringBuilder.append(sAlphabet[random.nextInt(sAlphabet.length)]);
-        }
-        return stringBuilder.toString();
-    }
 }

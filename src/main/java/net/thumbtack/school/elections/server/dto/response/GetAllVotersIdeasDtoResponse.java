@@ -1,4 +1,5 @@
 package net.thumbtack.school.elections.server.dto.response;
+
 import net.thumbtack.school.elections.server.model.Idea;
 import java.util.List;
 
